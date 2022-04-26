@@ -18,7 +18,6 @@ const getProductsFromServer = () => {
 
 const getSingleProductFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    // parameterized query
     const sqlQuery = "select * from products where product_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
@@ -38,7 +37,6 @@ const getSingleProductFromServer = (id) => {
 
 const findProduct = (query) => {
   return new Promise((resolve, reject) => {
-    // asumsikan query berisikan title, order, sort
     const { name, price, category,price_above, price_under } = query;
     let sqlQuery =
       "select * from products where lower(product_name) like lower('%' || $1 || '%')  or product_price = $2 or product_category = $3 or product_price >= $4 or product_price <= $5";
@@ -96,12 +94,12 @@ const createNewProduct = (body) => {
 
 const deleteProductFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM products where user_id = $1";
+    const sqlQuery = "DELETE FROM products where product_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         const response = {
           data: data.rows,
-          msg: `Product with id= ${id} was succesfully deleted`,
+          msg: `Product with id ${id} was succesfully deleted`,
         };
         resolve(response);
       })

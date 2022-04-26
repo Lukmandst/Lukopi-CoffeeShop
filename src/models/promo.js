@@ -18,7 +18,6 @@ const getPromoFromServer = () => {
 
 const getSinglePromoFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    // parameterized query
     const sqlQuery = "select * from promos where promo_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
@@ -38,7 +37,6 @@ const getSinglePromoFromServer = (id) => {
 
 const findPromo = (query) => {
   return new Promise((resolve, reject) => {
-    // asumsikan query berisikan title, order, sort
     const {
       name, //1
       code, //2

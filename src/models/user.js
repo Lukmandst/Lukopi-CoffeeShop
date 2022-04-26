@@ -18,7 +18,6 @@ const getUsersFromServer = () => {
 
 const getSingleUserFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    // parameterized query
     const sqlQuery = "select * from users where user_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
@@ -38,7 +37,6 @@ const getSingleUserFromServer = (id) => {
 
 const findUser = (query) => {
   return new Promise((resolve, reject) => {
-    // asumsikan query berisikan title, order, sort
     const { name, gender } = query;
     let sqlQuery =
       "select * from users where lower(user_display_name) like lower('%' || $1 || '%') or lower(user_first_name) like lower('%' || $1 || '%') or lower(user_last_name) like lower('%' || $1 || '%') or lower(user_gender) = lower($2)";

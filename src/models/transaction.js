@@ -18,7 +18,6 @@ const getTransactionsFromServer = () => {
 
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    // parameterized query
     const sqlQuery = "select * from transactions where transaction_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
@@ -38,7 +37,6 @@ const getSingleTransactionFromServer = (id) => {
 
 const findTransaction = (query) => {
   return new Promise((resolve, reject) => {
-    // asumsikan query berisikan title, order, sort
     const {
       date, //1
       buyer_name, //2

@@ -8,90 +8,71 @@ const {
   deleteTransactionFromServer,
 } = transactionModel;
 
+const {
+  successResponseDefault,
+  errorResponseDefault,
+  successResponseforDelete,
+} = require("../helpers/response");
+
 const getAllTransactions = (_, res) => {
   getTransactionsFromServer()
-    .then(({ data }) => {
-      res.status(200).json({
-        data,
-        err: null,
-      });
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
     })
     .catch((error) => {
       const { err, status } = error;
-      res.status(status).json({
-        data: [],
-        err,
-      });
+      errorResponseDefault(res, status, err);
     });
 };
 
 const getTransactionById = (req, res) => {
   const id = req.params.id;
   getSingleTransactionFromServer(id)
-    .then(({ data }) => {
-      res.status(200).json({
-        data,
-        err: null,
-      });
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
     })
     .catch((error) => {
       const { err, status } = error;
-      res.status(status).json({
-        data: [],
-        err,
-      });
+      errorResponseDefault(res, status, err);
     });
 };
 
 const findTransactionByQuery = (req, res) => {
   findTransaction(req.query)
-    .then(({ data, total }) => {
-      res.status(200).json({
-        err: null,
-        data,
-        total,
-      });
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
     })
-    .catch(({ status, err }) => {
-      res.status(status).json({
-        data: [],
-        err,
-      });
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
     });
 };
 
 const postNewTransaction = (req, res) => {
   createNewTransaction(req.body)
-    .then(({ data }) => {
-      res.status(200).json({
-        err: null,
-        data,
-      });
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
     })
-    .catch(({ status, err }) => {
-      res.status(status).json({
-        err,
-        data: [],
-      });
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
     });
 };
 
 const deleteTransactionById = (req, res) => {
   const id = req.params.id;
   deleteTransactionFromServer(id)
-    .then(({ data, msg }) => {
-      res.status(200).json({
-        data,
-        msg,
-        err: null,
-      });
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseforDelete(res, 200, data, msg);
     })
     .catch((error) => {
       const { err, status } = error;
-      res.status(status).json({
-        data: [],
-        err,
-      });
+      errorResponseDefault(res, status, err);
     });
 };
 
