@@ -1,0 +1,25 @@
+{
+  "name": "lukopi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo tes 123 dicoba && exit 1",
+    "startDev": "nodemon index"
+  },
+  "keywords": [
+    "api"
+  ],
+  "author": "lukman",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "pg": "^8.7.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.13.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15"
+  }
+}
