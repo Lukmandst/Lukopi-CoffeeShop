@@ -125,6 +125,9 @@ const deleteTransactionFromServer = (id) => {
     const sqlQuery = "DELETE FROM transactions where transaction_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
+        if (data.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
         const response = {
           data: data.rows,
           msg: `Transactions with id= ${id} was succesfully deleted`,

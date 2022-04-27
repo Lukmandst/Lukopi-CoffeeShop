@@ -123,6 +123,9 @@ const deleteUserFromServer = (id) => {
     const sqlQuery = "DELETE FROM users where user_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
+        if (data.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
         const response = {
           data: data.rows,
           msg: `User with id= ${id} was succesfully deleted`,

@@ -113,6 +113,9 @@ const deletePromoFromServer = (id) => {
     const sqlQuery = "DELETE FROM promos where promo_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
+        if (data.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
         const response = {
           data: data.rows,
           msg: `Promo with id ${id} was succesfully deleted`,
