@@ -12,7 +12,7 @@ const {
 const {
   successResponseDefault,
   errorResponseDefault,
-  successResponseforDelete,
+  successResponseWithMsg,
 } = require("../helpers/response");
 
 const getAllTransactions = (_, res) => {
@@ -69,7 +69,7 @@ const deleteTransactionById = (req, res) => {
   deleteTransactionFromServer(id)
     .then((result) => {
       const { data, msg } = result;
-      successResponseforDelete(res, 200, data, msg);
+      successResponseWithMsg(res, 200, data, msg);
     })
     .catch((error) => {
       const { err, status } = error;
@@ -77,8 +77,9 @@ const deleteTransactionById = (req, res) => {
     });
 };
 
-const sortTransactionsByQuantity = (_, res) => {
-  sortProduct()
+const sortPopularProduct = (req, res) => {
+  const id = req.params.id;
+  sortProduct(id)
     .then((result) => {
       const { data, total } = result;
       successResponseDefault(res, 200, data, total);
@@ -95,5 +96,5 @@ module.exports = {
   findTransactionByQuery,
   postNewTransaction,
   deleteTransactionById,
-  sortTransactionsByQuantity,
+  sortPopularProduct,
 };

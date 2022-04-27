@@ -4,13 +4,14 @@ const {
   getSinglePromoFromServer,
   findPromo,
   createNewPromo,
+  updatePromo,
   deletePromoFromServer,
 } = promoModel;
 
 const {
   successResponseDefault,
   errorResponseDefault,
-  successResponseforDelete,
+  successResponseWithMsg,
 } = require("../helpers/response");
 
 const getAllPromos = (_, res) => {
@@ -62,12 +63,24 @@ const postNewPromo = (req, res) => {
   });
 };
 
+const updatePromoById = (req, res) => {
+  const id = req.params.id;
+  updatePromo(id, req.body)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 const deletePromoById = (req, res) => {
   const id = req.params.id;
   deletePromoFromServer(id)
   .then((result) => {
     const { data, msg } = result;
-    successResponseforDelete(res, 200, data, msg);
+    successResponseWithMsg(res, 200, data, msg);
   })
   .catch((error) => {
     const { err, status } = error;
@@ -80,5 +93,6 @@ module.exports = {
   getPromoById,
   findPromoByQuery,
   postNewPromo,
+  updatePromoById,
   deletePromoById,
 };

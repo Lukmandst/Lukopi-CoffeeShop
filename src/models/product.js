@@ -113,10 +113,71 @@ const deleteProductFromServer = (id) => {
   });
 };
 
+const updateProduct = (id, body) => {
+  return new Promise((resolve, reject) => {
+    const {
+      name,
+      category,
+      price,
+      stock,
+      details,
+      delivery_start,
+      delivery_end,
+    } = body;
+    const sqlQuery =
+      "UPDATE products SET product_name= COALESCE($1, product_name), product_category= COALESCE($2, product_category), product_price= COALESCE($3, product_price), product_stock= COALESCE($4, product_stock), product_details= COALESCE($5, product_details), product_delivery_start= COALESCE($6, product_delivery_end), product_delivery_end= COALESCE($7, product_delivery_end) WHERE product_id=$8 RETURNING *";
+    db.query(sqlQuery, [
+      name,
+      category,
+      price,
+      stock,
+      details,
+      delivery_start,
+      delivery_end,
+      id,
+    ])
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: `Product with id ${id} has been updated`,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 const sortProduct = () => {
   return new Promise((resolve, reject) => {
     db.query("SELECT * FROM products ORDER BY product_id DESC")
       .then((result) => {
+        const response = {
+          total: result.rowCount,
+          data: result.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
+const sortByPrice = (query) => {
+  return new Promise((resolve, reject) => {
+    const { price_from, price_to, sort } = query;
+    let sqlQuery =
+      "SELECT * FROM products WHERE product_price between $1 AND $2 ORDER BY product_price";
+    if (sort) {
+      sqlQuery += " "+ sort;
+    }
+    db.query(sqlQuery, [price_from, price_to])
+      .then((result) => {
+        if (result.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
         const response = {
           total: result.rowCount,
           data: result.rows,
@@ -134,6 +195,8 @@ module.exports = {
   getSingleProductFromServer,
   findProduct,
   createNewProduct,
+  updateProduct,
   deleteProductFromServer,
-  sortProduct
+  sortProduct,
+  sortByPrice,
 };

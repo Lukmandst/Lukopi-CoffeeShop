@@ -4,14 +4,16 @@ const {
   getSingleProductFromServer,
   findProduct,
   createNewProduct,
+  updateProduct,
   deleteProductFromServer,
-  sortProduct
+  sortProduct,
+  sortByPrice
 } = productModel;
 
 const {
   successResponseDefault,
   errorResponseDefault,
-  successResponseforDelete,
+  successResponseWithMsg,
 } = require("../helpers/response");
 
 const getAllProducts = (_, res) => {
@@ -68,7 +70,20 @@ const deleteProductById = (req, res) => {
   deleteProductFromServer(id)
     .then((result) => {
       const { data, msg } = result;
-      successResponseforDelete(res, 200, data, msg);
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+
+const updateProductById = (req, res) => {
+  const id = req.params.id;
+  updateProduct(id, req.body)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
     })
     .catch((error) => {
       const { err, status } = error;
@@ -88,11 +103,25 @@ const sortProductByLatest = (_, res) => {
     });
 };
 
+const sortProductBetweenPrice = (req, res) => {
+  sortByPrice(req.query)
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   findProductByQuery,
   postNewProduct,
+  updateProductById,
   deleteProductById,
-  sortProductByLatest
+  sortProductByLatest,
+  sortProductBetweenPrice
 };

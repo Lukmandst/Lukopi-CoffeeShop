@@ -140,10 +140,10 @@ const deleteTransactionFromServer = (id) => {
   });
 };
 
-const sortProduct = () => {
+const sortProduct = (id) => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT product_quantity, product_id, product_name FROM transactions ORDER BY product_quantity DESC"
+      "SELECT product_name, COUNT (product_name)FROM transactions WHERE user_id = $1 GROUP BY product_name ",[id]
     )
       .then((result) => {
         if (result.rows.length === 0) {

@@ -8,10 +8,10 @@ response.successResponseDefault = (res, status, data, total) => {
   });
 };
 
-response.successResponseforDelete = (res, status, data, msg) => {
+response.successResponseWithMsg = (res, status, data, msg) => {
   res.status(status).json({
-    data,
     msg,
+    data,
     err: null,
   });
 };

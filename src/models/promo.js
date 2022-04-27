@@ -108,6 +108,42 @@ const createNewPromo = (body) => {
   });
 };
 
+const updatePromo = (id, body) => {
+  return new Promise((resolve, reject) => {
+    const {
+      name, //1
+      code, //2
+      discount, //3
+      product_size, //4
+      buy_method, //5
+      promo_start, //6
+      promo_end, //7
+    } = body;
+    const sqlQuery =
+      "UPDATE promos SET promo_name= COALESCE($1, promo_name), promo_code= COALESCE($2, promo_code), promo_discount= COALESCE($3, promo_discount), size_id= COALESCE($4, size_id), method_id= COALESCE($5, method_id), promo_date_start= COALESCE($6, promo_date_start), promo_date_end= COALESCE($7, promo_date_end) WHERE promo_id=$8 RETURNING *";
+    db.query(sqlQuery, [
+      name, //1
+      code, //2
+      discount, //3
+      product_size, //4
+      buy_method, //5
+      promo_start, //6
+      promo_end, //7
+      id, // 8
+    ])
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: `Promo with id ${id} has been updated`,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 const deletePromoFromServer = (id) => {
   return new Promise((resolve, reject) => {
     const sqlQuery = "DELETE FROM promos where promo_id = $1";
@@ -133,5 +169,6 @@ module.exports = {
   getSinglePromoFromServer,
   findPromo,
   createNewPromo,
+  updatePromo,
   deletePromoFromServer,
 };

@@ -4,14 +4,14 @@ const {
   findUser,
   getSingleUserFromServer,
   createNewUser,
-  // updateUser,
+  updateUser,
   deleteUserFromServer,
 } = userModel;
 
 const {
   successResponseDefault,
   errorResponseDefault,
-  successResponseforDelete,
+  successResponseWithMsg,
 } = require("../helpers/response");
 
 const getAllUsers = (_, res) => {
@@ -63,25 +63,25 @@ const postNewUser = (req, res) => {
     });
 };
 
-// const updateUserById = (req, res) => {
-//   const id = req.params.id;
-//   updateUser(id)
-//     .then((result) => {
-//       const { data } = result;
-//       successResponseDefault(res, 200, data);
-//     })
-//     .catch((error) => {
-//       const { err, status } = error;
-//       errorResponseDefault(res, status, err);
-//     });
-// };
+const updateUserById = (req, res) => {
+  const id = req.params.id;
+  updateUser(id, req.body)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 
 const deleteUserById = (req, res) => {
   const id = req.params.id;
   deleteUserFromServer(id)
     .then((result) => {
       const { data, msg } = result;
-      successResponseforDelete(res, 200, data, msg);
+      successResponseWithMsg(res, 200, data, msg);
     })
     .catch((error) => {
       const { err, status } = error;
@@ -94,6 +94,6 @@ module.exports = {
   getUserById,
   findUserByQuery,
   postNewUser,
-  // updateUserById,
+  updateUserById,
   deleteUserById,
 };

@@ -4,7 +4,7 @@ const Router = express.Router();
 const transactionController = require("../controllers/transaction");
 
 Router.get("/all", transactionController.getAllTransactions);
-Router.get("/quantity", transactionController.sortTransactionsByQuantity);
+Router.get("/:id/favorite", transactionController.sortPopularProduct);
 Router.get("/:id", transactionController.getTransactionById);
 Router.get("/", transactionController.findTransactionByQuery);
 Router.post("/", transactionController.postNewTransaction);

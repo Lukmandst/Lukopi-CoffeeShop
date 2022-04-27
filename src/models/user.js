@@ -98,25 +98,45 @@ const createNewUser = (body) => {
   });
 };
 
-// const updateUser = (id) => {
-//     return new Promise((resolve, reject) => {
-//       // const{user_}
-//       const sqlQuery = "UPDATE users SET user_display_name=$1 where user_id = $2";
-//       db.query(sqlQuery, [id])
-//         .then((data) => {
-//           if (data.rows.length === 0) {
-//             return reject({ status: 404, err: "User Not Found" });
-//           }
-//           const response = {
-//             data: data.rows,
-//           };
-//           resolve(response);
-//         })
-//         .catch((err) => {
-//           reject({ status: 500, err });
-//         });
-//     });
-// };
+const updateUser = (id, body) => {
+  return new Promise((resolve, reject) => {
+    const {
+      first_name,
+      last_name,
+      display_name,
+      email,
+      phone_number,
+      gender,
+      birthdate,
+      password,
+      delivery_address,
+    } = body;
+    const sqlQuery =
+      "UPDATE users SET user_first_name= COALESCE($1, user_first_name), user_last_name= COALESCE($2, user_last_name), user_display_name= COALESCE($3, user_display_name), user_email= COALESCE($4, user_email), user_phone_number= COALESCE($5, user_phone_number), user_gender= COALESCE($6, user_gender), user_birthdate= COALESCE($7, user_birthdate), user_password= COALESCE($8, user_password), user_delivery_address= COALESCE($9, user_delivery_address) WHERE user_id=$10 RETURNING *";
+    db.query(sqlQuery, [
+      first_name,
+      last_name,
+      display_name,
+      email,
+      phone_number,
+      gender,
+      birthdate,
+      password,
+      delivery_address,
+      id,
+    ])
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: `User with id ${id} has been updated`,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 const deleteUserFromServer = (id) => {
   return new Promise((resolve, reject) => {
@@ -143,6 +163,6 @@ module.exports = {
   getSingleUserFromServer,
   findUser,
   createNewUser,
-  // updateUser,
+  updateUser,
   deleteUserFromServer,
 };
