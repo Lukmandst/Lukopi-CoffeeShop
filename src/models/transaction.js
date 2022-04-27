@@ -137,10 +137,32 @@ const deleteTransactionFromServer = (id) => {
   });
 };
 
+const sortProduct = () => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      "SELECT product_quantity, product_id, product_name FROM transactions ORDER BY product_quantity DESC"
+    )
+      .then((result) => {
+        if (result.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
+        const response = {
+          total: result.rowCount,
+          data: result.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 module.exports = {
   getTransactionsFromServer,
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
   deleteTransactionFromServer,
+  sortProduct
 };

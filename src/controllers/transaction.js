@@ -6,6 +6,7 @@ const {
   findTransaction,
   createNewTransaction,
   deleteTransactionFromServer,
+  sortProduct,
 } = transactionModel;
 
 const {
@@ -76,10 +77,23 @@ const deleteTransactionById = (req, res) => {
     });
 };
 
+const sortTransactionsByQuantity = (_, res) => {
+  sortProduct()
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+
 module.exports = {
   getAllTransactions,
   getTransactionById,
   findTransactionByQuery,
   postNewTransaction,
   deleteTransactionById,
+  sortTransactionsByQuantity,
 };

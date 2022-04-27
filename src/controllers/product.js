@@ -5,6 +5,7 @@ const {
   findProduct,
   createNewProduct,
   deleteProductFromServer,
+  sortProduct
 } = productModel;
 
 const {
@@ -75,10 +76,23 @@ const deleteProductById = (req, res) => {
     });
 };
 
+const sortProductByLatest = (_, res) => {
+  sortProduct()
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+
 module.exports = {
   getAllProducts,
   getProductById,
   findProductByQuery,
   postNewProduct,
   deleteProductById,
+  sortProductByLatest
 };

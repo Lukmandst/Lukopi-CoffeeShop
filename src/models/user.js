@@ -98,19 +98,24 @@ const createNewUser = (body) => {
   });
 };
 
-// const updateUser = (body) => {
-//   return new Promise((resolve, reject) => {
-//     const { id } = body;
-//     const sqlQuery = "UPDATE users SET column = ? WHERE user_id=$1 RETURNING *";
-//     db.query(sqlQuery, [id])
-//       .then(({ rows }) => {
-//         const response = {
-//           data: rows[0],
-//         };
-//         resolve(response);
-//       })
-//       .catch((err) => reject({ status: 500, err }));
-//   });
+// const updateUser = (id) => {
+//     return new Promise((resolve, reject) => {
+//       // const{user_}
+//       const sqlQuery = "UPDATE users SET user_display_name=$1 where user_id = $2";
+//       db.query(sqlQuery, [id])
+//         .then((data) => {
+//           if (data.rows.length === 0) {
+//             return reject({ status: 404, err: "User Not Found" });
+//           }
+//           const response = {
+//             data: data.rows,
+//           };
+//           resolve(response);
+//         })
+//         .catch((err) => {
+//           reject({ status: 500, err });
+//         });
+//     });
 // };
 
 const deleteUserFromServer = (id) => {

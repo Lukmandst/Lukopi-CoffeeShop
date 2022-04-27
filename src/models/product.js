@@ -37,12 +37,13 @@ const getSingleProductFromServer = (id) => {
 
 const findProduct = (query) => {
   return new Promise((resolve, reject) => {
-    const { name, price, category,price_above, price_under } = query;
+    const { name, price, category, price_above, price_under, order, sort } =
+      query;
     let sqlQuery =
       "select * from products where lower(product_name) like lower('%' || $1 || '%')  or product_price = $2 or product_category = $3 or product_price >= $4 or product_price <= $5";
-    // if (order) {
-    //   sqlQuery += " order by " + sort + " " + order;
-    // }
+    if (order) {
+      sqlQuery += " order by " + sort + " " + order;
+    }
     db.query(sqlQuery, [name, price, category, price_above, price_under])
       .then((result) => {
         if (result.rows.length === 0) {
@@ -109,10 +110,27 @@ const deleteProductFromServer = (id) => {
   });
 };
 
+const sortProduct = () => {
+  return new Promise((resolve, reject) => {
+    db.query("SELECT * FROM products ORDER BY product_id DESC")
+      .then((result) => {
+        const response = {
+          total: result.rowCount,
+          data: result.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 module.exports = {
   getProductsFromServer,
   getSingleProductFromServer,
   findProduct,
   createNewProduct,
   deleteProductFromServer,
+  sortProduct
 };

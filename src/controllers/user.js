@@ -63,19 +63,16 @@ const postNewUser = (req, res) => {
     });
 };
 
-// const updateDataUser = (req, res) => {
-//   updateUser(req.body)
-//     .then(({ data }) => {
-//       res.status(200).json({
-//         err: null,
-//         data,
-//       });
+// const updateUserById = (req, res) => {
+//   const id = req.params.id;
+//   updateUser(id)
+//     .then((result) => {
+//       const { data } = result;
+//       successResponseDefault(res, 200, data);
 //     })
-//     .catch(({ status, err }) => {
-//       res.status(status).json({
-//         err,
-//         data: [],
-//       });
+//     .catch((error) => {
+//       const { err, status } = error;
+//       errorResponseDefault(res, status, err);
 //     });
 // };
 
@@ -97,6 +94,6 @@ module.exports = {
   getUserById,
   findUserByQuery,
   postNewUser,
-  // updateDataUser,
+  // updateUserById,
   deleteUserById,
 };
