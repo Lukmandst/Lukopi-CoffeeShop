@@ -18,7 +18,7 @@ const getTransactionsFromServer = () => {
 
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from transactions where transaction_id = $1";
+    const sqlQuery = "select * from transactions where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -38,35 +38,29 @@ const getSingleTransactionFromServer = (id) => {
 const findTransaction = (query) => {
   return new Promise((resolve, reject) => {
     const {
-      date, //1
-      buyer_name, //2
-      type, //3
-      quantity, //4
-      product_name, //5
-      product_size, //6
-      payment_method, //7
-      total_payment_above, //8
-      total_payment_less, //9
-      quantity_above,// 10
-      quantity_less, //11
+      date,
+      buyer_name,
+      quantity,
+      product_id,
+      product_size,
+      quantity_above,
+      quantity_less,
+      user_id,
     } = query;
     let sqlQuery =
-      "select * from transactions where transaction_date = $1 or lower(user_display_name) like lower('%' || $2 || '%')  or transaction_type = $3 or product_quantity = $4 or lower(product_name) like lower('%' || $5 || '%') or product_size = $6 or payment_method = $7 or total_payment > $8 or total_payment < $9 or product_quantity > $10 or product_quantity < $11";
+      "select * from transactions where date = $1 or lower(users_display_name) like lower('%' || $2 || '%') or quantity = $3 or products_id = $4 or size = $5 or quantity > $6 or quantity < $7 or users_id = $8";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
     db.query(sqlQuery, [
       date,
       buyer_name,
-      type,
       quantity,
-      product_name,
+      product_id,
       product_size,
-      payment_method,
-      total_payment_above,
-      total_payment_less,
       quantity_above,
       quantity_less,
+      user_id,
     ])
       .then((result) => {
         if (result.rows.length === 0) {
@@ -89,26 +83,24 @@ const createNewTransaction = (body) => {
     const {
       date,
       buyer_name,
-      type,
-      product_id,
       quantity,
-      payment_method,
-      total_payment,
-      product_name,
+      product_id,
       product_size,
+      quantity_above,
+      quantity_less,
+      user_id,
     } = body;
     const sqlQuery =
-      "INSERT INTO transactions (transaction_date, user_display_name, transaction_type, product_id, product_quantity, payment_method, total_payment, product_name, product_size) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
+      "INSERT INTO transactions (date, users_display_name, products_id, quantity, sizes_id, users_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
     db.query(sqlQuery, [
       date,
       buyer_name,
-      type,
-      product_id,
       quantity,
-      payment_method,
-      total_payment,
-      product_name,
+      product_id,
       product_size,
+      quantity_above,
+      quantity_less,
+      user_id,
     ])
       .then(({ rows }) => {
         const response = {
@@ -122,15 +114,12 @@ const createNewTransaction = (body) => {
 
 const deleteTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM transactions where transaction_id = $1";
+    const sqlQuery = "DELETE FROM transactions where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           data: data.rows,
-          msg: `Transactions with id= ${id} was succesfully deleted`,
+          msg: `Transactions with id= ${id} was successfully deleted`,
         };
         resolve(response);
       })
@@ -140,15 +129,12 @@ const deleteTransactionFromServer = (id) => {
   });
 };
 
-const sortProduct = (id) => {
+const sortProduct = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT product_name, COUNT (product_name)FROM transactions WHERE user_id = $1 GROUP BY product_name ",[id]
+      "SELECT products_id, COUNT (products_id) FROM transactions GROUP BY products_id"
     )
       .then((result) => {
-        if (result.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           total: result.rowCount,
           data: result.rows,
@@ -167,5 +153,5 @@ module.exports = {
   findTransaction,
   createNewTransaction,
   deleteTransactionFromServer,
-  sortProduct
+  sortProduct,
 };
