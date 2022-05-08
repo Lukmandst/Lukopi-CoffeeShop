@@ -48,7 +48,7 @@ const findTransaction = (query) => {
       user_id,
     } = query;
     let sqlQuery =
-      "select * from transactions where date = $1 or lower(users_display_name) like lower('%' || $2 || '%') or quantity = $3 or products_id = $4 or size = $5 or quantity > $6 or quantity < $7 or users_id = $8";
+      "select * from transactions where date = $1 or lower(users_display_name) like lower('%' || $2 || '%') or quantity = $3 or products_id = $4 or sizes_id = $5 or quantity > $6 or quantity < $7 or users_id = $8";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
