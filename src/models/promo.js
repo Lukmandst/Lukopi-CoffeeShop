@@ -18,7 +18,7 @@ const getPromoFromServer = () => {
 
 const getSinglePromoFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from promos where promo_id = $1";
+    const sqlQuery = "select * from promos where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -47,7 +47,7 @@ const findPromo = (query) => {
       discount_less, //7
     } = query;
     let sqlQuery =
-      "select * from promos where lower(promo_name) like lower('%' || $1 || '%') or lower(promo_code) like lower('%' || $2 || '%') or promo_discount = $3 or size_id = $4 or method_id =$5 or promo_discount > $6 or promo_discount < $7";
+      "select * from promos where lower(name) like lower('%' || $1 || '%') or lower(code) like lower('%' || $2 || '%') or discount = $3 or sizes_id = $4 or delivery_id =$5 or discount > $6 or discount < $7";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
@@ -88,7 +88,7 @@ const createNewPromo = (body) => {
       buy_method,
     } = body;
     const sqlQuery =
-      "INSERT INTO promos(promo_name, promo_code, promo_discount, promo_date_start, promo_date_end, size_id, method_id)VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+      "INSERT INTO promos(name, code, discount, start, end, sizes_id, delivery_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
     db.query(sqlQuery, [
       name,
       code,
@@ -120,7 +120,7 @@ const updatePromo = (id, body) => {
       promo_end, //7
     } = body;
     const sqlQuery =
-      "UPDATE promos SET promo_name= COALESCE($1, promo_name), promo_code= COALESCE($2, promo_code), promo_discount= COALESCE($3, promo_discount), size_id= COALESCE($4, size_id), method_id= COALESCE($5, method_id), promo_date_start= COALESCE($6, promo_date_start), promo_date_end= COALESCE($7, promo_date_end) WHERE promo_id=$8 RETURNING *";
+      "UPDATE promos SET name= COALESCE($1, name), code= COALESCE($2, code), discount= COALESCE($3, discount), sizes_id= COALESCE($4, sizes_id), delivery_id= COALESCE($5, delivery_id), start= COALESCE($6, start), end= COALESCE($7, end) WHERE promo_id=$8 RETURNING *";
     db.query(sqlQuery, [
       name, //1
       code, //2
@@ -146,15 +146,12 @@ const updatePromo = (id, body) => {
 
 const deletePromoFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM promos where promo_id = $1";
+    const sqlQuery = "DELETE FROM promos where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           data: data.rows,
-          msg: `Promo with id ${id} was succesfully deleted`,
+          msg: `Promo with id ${id} was successfully deleted`,
         };
         resolve(response);
       })
