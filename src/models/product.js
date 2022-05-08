@@ -18,7 +18,7 @@ const getProductsFromServer = () => {
 
 const getSingleProductFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from products where product_id = $1";
+    const sqlQuery = "select * from products where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -40,7 +40,7 @@ const findProduct = (query) => {
     const { name, price, category, price_above, price_under, order, sort } =
       query;
     let sqlQuery =
-      "select * from products where lower(product_name) like lower('%' || $1 || '%')  or product_price = $2 or product_category = $3 or product_price >= $4 or product_price <= $5";
+      "select name, price, categories_id from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5";
     if (order) {
       sqlQuery += " order by " + sort + " " + order;
     }
@@ -73,7 +73,7 @@ const createNewProduct = (body) => {
       delivery_end,
     } = body;
     const sqlQuery =
-      "INSERT INTO products (product_name, product_category, product_price, product_stock,  product_details, product_delivery_start, product_delivery_end) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+      "INSERT INTO products (name, categories_id, price, stock, details, delivery_start, delivery_end) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
     db.query(sqlQuery, [
       name,
       category,
@@ -95,15 +95,12 @@ const createNewProduct = (body) => {
 
 const deleteProductFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM products where product_id = $1";
+    const sqlQuery = "DELETE FROM products where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           data: data.rows,
-          msg: `Product with id ${id} was succesfully deleted`,
+          msg: `Product with id ${id} was successfully deleted`,
         };
         resolve(response);
       })
@@ -125,7 +122,7 @@ const updateProduct = (id, body) => {
       delivery_end,
     } = body;
     const sqlQuery =
-      "UPDATE products SET product_name= COALESCE($1, product_name), product_category= COALESCE($2, product_category), product_price= COALESCE($3, product_price), product_stock= COALESCE($4, product_stock), product_details= COALESCE($5, product_details), product_delivery_start= COALESCE($6, product_delivery_end), product_delivery_end= COALESCE($7, product_delivery_end) WHERE product_id=$8 RETURNING *";
+      "UPDATE products SET name= COALESCE($1, name), categories_id= COALESCE($2, categories_id), price= COALESCE($3, price), stock= COALESCE($4, stock), details= COALESCE($5, details), delivery_start= COALESCE($6, delivery_start), delivery_end= COALESCE($7, delivery_end) WHERE id=$8 RETURNING *";
     db.query(sqlQuery, [
       name,
       category,
@@ -151,7 +148,7 @@ const updateProduct = (id, body) => {
 
 const sortProduct = () => {
   return new Promise((resolve, reject) => {
-    db.query("SELECT * FROM products ORDER BY product_id DESC")
+    db.query("SELECT * FROM products ORDER BY id DESC")
       .then((result) => {
         const response = {
           total: result.rowCount,
@@ -167,17 +164,14 @@ const sortProduct = () => {
 
 const sortByPrice = (query) => {
   return new Promise((resolve, reject) => {
-    const { price_from, price_to, sort } = query;
+    const { sort } = query;
     let sqlQuery =
-      "SELECT * FROM products WHERE product_price between $1 AND $2 ORDER BY product_price";
+      "SELECT * FROM products ORDER BY price";
     if (sort) {
       sqlQuery += " "+ sort;
     }
-    db.query(sqlQuery, [price_from, price_to])
+    db.query(sqlQuery)
       .then((result) => {
-        if (result.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           total: result.rowCount,
           data: result.rows,
