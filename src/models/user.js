@@ -18,7 +18,7 @@ const getUsersFromServer = () => {
 
 const getSingleUserFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from users where user_id = $1";
+    const sqlQuery = "select * from users where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -39,7 +39,7 @@ const findUser = (query) => {
   return new Promise((resolve, reject) => {
     const { name, gender } = query;
     let sqlQuery =
-      "select * from users where lower(user_display_name) like lower('%' || $1 || '%') or lower(user_first_name) like lower('%' || $1 || '%') or lower(user_last_name) like lower('%' || $1 || '%') or lower(user_gender) = lower($2)";
+      "select * from users where lower(display_name) like lower('%' || $1 || '%') or lower(first_name) like lower('%' || $1 || '%') or lower(last_name) like lower('%' || $1 || '%') or lower(gender) = lower($2)";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
@@ -75,7 +75,7 @@ const createNewUser = (body) => {
       register_date,
     } = body;
     const sqlQuery =
-      "INSERT INTO users (user_first_name, user_last_name, user_display_name, user_email, user_phone_number, user_gender, user_birthdate, user_password, user_delivery_address, user_register_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
+      "INSERT INTO users (first_name, last_name, display_name, email, phone_number, gender, birthdate, password, delivery_address, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
     db.query(sqlQuery, [
       first_name,
       last_name,
@@ -112,7 +112,7 @@ const updateUser = (id, body) => {
       delivery_address,
     } = body;
     const sqlQuery =
-      "UPDATE users SET user_first_name= COALESCE($1, user_first_name), user_last_name= COALESCE($2, user_last_name), user_display_name= COALESCE($3, user_display_name), user_email= COALESCE($4, user_email), user_phone_number= COALESCE($5, user_phone_number), user_gender= COALESCE($6, user_gender), user_birthdate= COALESCE($7, user_birthdate), user_password= COALESCE($8, user_password), user_delivery_address= COALESCE($9, user_delivery_address) WHERE user_id=$10 RETURNING *";
+      "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate), password= COALESCE($8, password), delivery_address= COALESCE($9, delivery_address) WHERE id=$10 RETURNING *";
     db.query(sqlQuery, [
       first_name,
       last_name,
@@ -143,12 +143,9 @@ const deleteUserFromServer = (id) => {
     const sqlQuery = "DELETE FROM users where user_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
         const response = {
           data: data.rows,
-          msg: `User with id= ${id} was succesfully deleted`,
+          msg: `User with id= ${id} was successfully deleted`,
         };
         resolve(response);
       })
