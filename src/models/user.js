@@ -75,7 +75,7 @@ const createNewUser = (body) => {
       register_date,
     } = body;
     const sqlQuery =
-      "INSERT INTO users (first_name, last_name, display_name, email, phone_number, gender, birthdate, password, delivery_address, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
+      "INSERT INTO users (first_name, last_name, display_name, email, phone_number, gender, birthdate, pass, delivery_address, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *";
     db.query(sqlQuery, [
       first_name,
       last_name,
@@ -112,7 +112,7 @@ const updateUser = (id, body) => {
       delivery_address,
     } = body;
     const sqlQuery =
-      "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate), password= COALESCE($8, password), delivery_address= COALESCE($9, delivery_address) WHERE id=$10 RETURNING *";
+      "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate), pass= COALESCE($8, pass), delivery_address= COALESCE($9, delivery_address) WHERE id=$10 RETURNING *";
     db.query(sqlQuery, [
       first_name,
       last_name,
@@ -140,7 +140,7 @@ const updateUser = (id, body) => {
 
 const deleteUserFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM users where user_id = $1";
+    const sqlQuery = "DELETE FROM users where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         const response = {
