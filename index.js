@@ -3,6 +3,7 @@ const express = require("express"); // import package express
 
 const mainRouter = require("./src/routes");
 const db = require("./src/config/database");
+const logger = require("morgan");
 // create express application
 const server = express();
 const PORT = 8080;
@@ -10,6 +11,9 @@ const PORT = 8080;
 db.connect()
   .then(() => {
     console.log("DB Connected");
+    server.use(
+      logger(":method :url :status :res[content-length] - :response-time ms")
+    );
     server.use(express.urlencoded({ extended: false }));
     server.use(express.json());
     server.use(mainRouter);
