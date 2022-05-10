@@ -20,5 +20,16 @@ const signUp = (email, hashedPass) => {
       });
   });
 };
-
-module.exports = { signUp };
+const getUserByEmail = (email) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "SELECT email FROM users WHERE email = $1";
+    db.query(sqlQuery, [email])
+      .then((result) => {
+        resolve(result);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+module.exports = { signUp, getUserByEmail };

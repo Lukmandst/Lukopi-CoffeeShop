@@ -1,8 +1,9 @@
 const Router = require("express").Router();
 const authController = require("../controllers/auth");
+const { checkDuplicate } = require("../middlewares/auth");
 
 // sign up
-Router.post("/signup", authController.signUp);
+Router.post("/signup", checkDuplicate, authController.signUp);
 // sign in
 Router.post("/", () => {});
 // sign out
