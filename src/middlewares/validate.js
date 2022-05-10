@@ -1,4 +1,12 @@
-// const validate = {};
+// const { body } = require("express-validator");
+
+
+// const userValidation = [
+//   body("email", "Please include a valid email").isEmail(),
+//   body("password", "Password must be 6 or more characters").isLength({
+//     min: 6,
+//   }),
+// ];
 
 // // validate.queryFinde
 // validate.queryFind = (req, res, next) => {
@@ -30,5 +38,7 @@
 //     }
 //     next();
 //   };
-  
-//   module.exports = validate;
+
+// module.exports = {
+//     userValidation
+// };
