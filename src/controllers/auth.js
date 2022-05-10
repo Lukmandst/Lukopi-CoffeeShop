@@ -1,9 +1,11 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const {
   successResponseWithMsg,
   errorResponseDefault,
+  successResponseDefault,
 } = require("../helpers/response");
-const { signUp } = require("../models/auth");
+const { signUp, getPassbyUserEmail } = require("../models/auth");
 
 const auth = {};
 
@@ -29,6 +31,31 @@ auth.signUp = (req, res) => {
     });
 };
 
-// auth.signIn = (req, res) => {};
+auth.signIn = async (req, res) => {
+  try {
+    const {
+      body: { email, pass },
+    } = req;
+    const data = await getPassbyUserEmail(email);
+    const result = await bcrypt.compare(pass, data.pass);
+    if (!result)
+      return errorResponseDefault(res, 400, {
+        msg: "Email or Password is invalid!",
+      });
+    const payload = {
+      id: data.id,
+      email,
+    };
+    const jwtOptions = {
+      issuer: process.env.JWT_ISSUER,
+      expiresIn: "240s",
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
+    successResponseDefault(res, 200, { email, token }, null);
+  } catch (error) {
+    const { status = 500, err } = error;
+    errorResponseDefault(res, status, err);
+  }
+};
 
 module.exports = auth;

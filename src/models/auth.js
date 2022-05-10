@@ -11,8 +11,8 @@ const signUp = (email, hashedPass) => {
     db.query(sqlQuery, values)
       .then(() => {
         const response = {
-            msg: "Sign Up Success!",
-          };
+          msg: "Sign Up Success!",
+        };
         resolve(response);
       })
       .catch((err) => {
@@ -32,4 +32,17 @@ const getUserByEmail = (email) => {
       });
   });
 };
-module.exports = { signUp, getUserByEmail };
+
+const getPassbyUserEmail = async(email) => {
+  try {
+    const sqlQuery = "SELECT id, pass FROM users WHERE email=$1";
+    const result = await db.query(sqlQuery, [email]);
+    if (result.rowCount === 0)
+      throw { status: 400, err: { msg: "Email is not registered" } };
+    return result.rows[0];
+  } catch (error) {
+    const { status = 500, err } = error;
+    throw { status, err };
+  }
+};
+module.exports = { signUp, getUserByEmail, getPassbyUserEmail };
