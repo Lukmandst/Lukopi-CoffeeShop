@@ -14,13 +14,21 @@ const {
   successResponseDefault,
   errorResponseDefault,
   successResponseWithMsg,
+  successResponsewihMeta,
 } = require("../helpers/response");
 
-const getAllProducts = (_, res) => {
-  getProductsFromServer()
+const getAllProducts = (req, res) => {
+  getProductsFromServer(req.query)
     .then((result) => {
-      const { data, total } = result;
-      successResponseDefault(res, 200, data, total);
+      const { totalData, totalPage, data } = result;
+      const meta = {
+        totalData,
+        totalPage,
+        route: `/product${req.route.path}?`,
+        query: req.query,
+        page: req.query.page,
+      };
+      successResponsewihMeta(res, 200, data, meta);
     })
     .catch((error) => {
       const { err, status } = error;
