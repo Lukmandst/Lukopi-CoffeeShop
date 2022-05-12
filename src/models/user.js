@@ -108,11 +108,11 @@ const updateUser = (id, body) => {
       phone_number,
       gender,
       birthdate,
-      password,
       delivery_address,
     } = body;
+    const updated_at = new Date(Date.now());
     const sqlQuery =
-      "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate), pass= COALESCE($8, pass), delivery_address= COALESCE($9, delivery_address) WHERE id=$10 RETURNING *";
+      "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate),  delivery_address= COALESCE($8, delivery_address), updated_at = $10 WHERE id=$9 RETURNING *";
     db.query(sqlQuery, [
       first_name,
       last_name,
@@ -121,14 +121,14 @@ const updateUser = (id, body) => {
       phone_number,
       gender,
       birthdate,
-      password,
       delivery_address,
       id,
+      updated_at,
     ])
       .then((data) => {
         const response = {
           data: data.rows,
-          msg: `User with id ${id} has been updated`,
+          msg: "Your data has been updated!",
         };
         resolve(response);
       })
