@@ -5,7 +5,7 @@ const {
   // getSingleUserFromServer,
   createNewUser,
   updateUser,
-  deleteUserFromServer,
+  // deleteUserFromServer,
 } = userModel;
 
 const {
@@ -64,8 +64,7 @@ const postNewUser = (req, res) => {
 };
 
 const updateUserById = (req, res) => {
-  const id = req.params.id;
-  updateUser(id, req.body)
+  updateUser(req.userPayload.id, req.body)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);
@@ -76,18 +75,18 @@ const updateUserById = (req, res) => {
     });
 };
 
-const deleteUserById = (req, res) => {
-  const id = req.params.id;
-  deleteUserFromServer(id)
-    .then((result) => {
-      const { data, msg } = result;
-      successResponseWithMsg(res, 200, data, msg);
-    })
-    .catch((error) => {
-      const { err, status } = error;
-      errorResponseDefault(res, status, err);
-    });
-};
+// const deleteUserById = (req, res) => {
+//   const id = req.params.id;
+//   deleteUserFromServer(id)
+//     .then((result) => {
+//       const { data, msg } = result;
+//       successResponseWithMsg(res, 200, data, msg);
+//     })
+//     .catch((error) => {
+//       const { err, status } = error;
+//       errorResponseDefault(res, status, err);
+//     });
+// };
 
 module.exports = {
   getAllUsers,
@@ -95,5 +94,5 @@ module.exports = {
   findUserByQuery,
   postNewUser,
   updateUserById,
-  deleteUserById,
+  // deleteUserById,
 };
