@@ -1,7 +1,7 @@
 const promoModel = require("../models/promo");
 const {
   getPromoFromServer,
-  getSinglePromoFromServer,
+  // getSinglePromoFromServer,
   findPromo,
   createNewPromo,
   updatePromo,
@@ -26,18 +26,18 @@ const getAllPromos = (_, res) => {
   });
 };
 
-const getPromoById = (req, res) => {
-  const id = req.params.id;
-  getSinglePromoFromServer(id)
-  .then((result) => {
-    const { data } = result;
-    successResponseDefault(res, 200, data);
-  })
-  .catch((error) => {
-    const { err, status } = error;
-    errorResponseDefault(res, status, err);
-  });
-};
+// const getPromoById = (req, res) => {
+//   const id = req.params.id;
+//   getSinglePromoFromServer(id)
+//   .then((result) => {
+//     const { data } = result;
+//     successResponseDefault(res, 200, data);
+//   })
+//   .catch((error) => {
+//     const { err, status } = error;
+//     errorResponseDefault(res, status, err);
+//   });
+// };
 
 const findPromoByQuery = (req, res) => {
   findPromo(req.query)
@@ -90,7 +90,7 @@ const deletePromoById = (req, res) => {
 
 module.exports = {
   getAllPromos,
-  getPromoById,
+  // getPromoById,
   findPromoByQuery,
   postNewPromo,
   updatePromoById,

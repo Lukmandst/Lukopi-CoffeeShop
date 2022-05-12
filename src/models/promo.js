@@ -16,28 +16,29 @@ const getPromoFromServer = () => {
   });
 };
 
-const getSinglePromoFromServer = (id) => {
-  return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from promos where id = $1";
-    db.query(sqlQuery, [id])
-      .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Promo Not Found" });
-        }
-        const response = {
-          data: data.rows,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const getSinglePromoFromServer = (id) => {
+//   return new Promise((resolve, reject) => {
+//     const sqlQuery = "select * from promos where id = $1";
+//     db.query(sqlQuery, [id])
+//       .then((data) => {
+//         if (data.rows.length === 0) {
+//           return reject({ status: 404, err: "Promo Not Found" });
+//         }
+//         const response = {
+//           data: data.rows,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 const findPromo = (query) => {
   return new Promise((resolve, reject) => {
     const {
+      id,
       name, //1
       code, //2
       discount, //3
@@ -47,7 +48,7 @@ const findPromo = (query) => {
       discount_less, //7
     } = query;
     let sqlQuery =
-      "select * from promos where lower(name) like lower('%' || $1 || '%') or lower(code) like lower('%' || $2 || '%') or discount = $3 or sizes_id = $4 or delivery_id =$5 or discount > $6 or discount < $7";
+      "select * from promos where lower(name) like lower('%' || $1 || '%') or lower(code) like lower('%' || $2 || '%') or discount = $3 or sizes_id = $4 or delivery_id =$5 or discount > $6 or discount < $7 or id = $8";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
@@ -59,6 +60,7 @@ const findPromo = (query) => {
       buy_method,
       discount_above,
       discount_less,
+      id,
     ])
       .then((result) => {
         if (result.rows.length === 0) {
@@ -163,7 +165,7 @@ const deletePromoFromServer = (id) => {
 
 module.exports = {
   getPromoFromServer,
-  getSinglePromoFromServer,
+  // getSinglePromoFromServer,
   findPromo,
   createNewPromo,
   updatePromo,

@@ -8,6 +8,6 @@ Router.get("/favorite", transactionController.sortPopularProduct);
 Router.get("/:id", transactionController.getTransactionById);
 Router.get("/", transactionController.findTransactionByQuery);
 Router.post("/", transactionController.postNewTransaction);
-Router.delete("/", transactionController.deleteTransactionById);
+// Router.delete("/", transactionController.deleteTransactionById);
 
 module.exports=Router;

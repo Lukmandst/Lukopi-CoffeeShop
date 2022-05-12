@@ -16,35 +16,35 @@ const getProductsFromServer = () => {
   });
 };
 
-const getSingleProductFromServer = (id) => {
-  return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from products where id = $1";
-    db.query(sqlQuery, [id])
-      .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "Product Not Found" });
-        }
-        const response = {
-          data: data.rows,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const getSingleProductFromServer = (id) => {
+//   return new Promise((resolve, reject) => {
+//     const sqlQuery = "select * from products where id = $1";
+//     db.query(sqlQuery, [id])
+//       .then((data) => {
+//         if (data.rows.length === 0) {
+//           return reject({ status: 404, err: "Product Not Found" });
+//         }
+//         const response = {
+//           data: data.rows,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 const findProduct = (query) => {
   return new Promise((resolve, reject) => {
-    const { name, price, category, price_above, price_under, order, sort } =
+    const { name, price, category, price_above, price_under, order, sort, id } =
       query;
     let sqlQuery =
-      "select name, price, categories_id from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5";
+      "select name, price, categories_id from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6";
     if (order) {
       sqlQuery += " order by " + sort + " " + order;
     }
-    db.query(sqlQuery, [name, price, category, price_above, price_under])
+    db.query(sqlQuery, [name, price, category, price_above, price_under, id])
       .then((result) => {
         if (result.rows.length === 0) {
           return reject({ status: 404, err: "Product Not Found" });
@@ -165,10 +165,9 @@ const sortProduct = () => {
 const sortByPrice = (query) => {
   return new Promise((resolve, reject) => {
     const { sort } = query;
-    let sqlQuery =
-      "SELECT * FROM products ORDER BY price";
+    let sqlQuery = "SELECT * FROM products ORDER BY price";
     if (sort) {
-      sqlQuery += " "+ sort;
+      sqlQuery += " " + sort;
     }
     db.query(sqlQuery)
       .then((result) => {
@@ -186,7 +185,7 @@ const sortByPrice = (query) => {
 
 module.exports = {
   getProductsFromServer,
-  getSingleProductFromServer,
+  // getSingleProductFromServer,
   findProduct,
   createNewProduct,
   updateProduct,

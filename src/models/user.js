@@ -16,34 +16,34 @@ const getUsersFromServer = () => {
   });
 };
 
-const getSingleUserFromServer = (id) => {
-  return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from users where id = $1";
-    db.query(sqlQuery, [id])
-      .then((data) => {
-        if (data.rows.length === 0) {
-          return reject({ status: 404, err: "User Not Found" });
-        }
-        const response = {
-          data: data.rows,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const getSingleUserFromServer = (id) => {
+//   return new Promise((resolve, reject) => {
+//     const sqlQuery = "select * from users where id = $1";
+//     db.query(sqlQuery, [id])
+//       .then((data) => {
+//         if (data.rows.length === 0) {
+//           return reject({ status: 404, err: "User Not Found" });
+//         }
+//         const response = {
+//           data: data.rows,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 const findUser = (query) => {
   return new Promise((resolve, reject) => {
-    const { name, gender } = query;
+    const { name, gender, id } = query;
     let sqlQuery =
-      "select * from users where lower(display_name) like lower('%' || $1 || '%') or lower(first_name) like lower('%' || $1 || '%') or lower(last_name) like lower('%' || $1 || '%') or lower(gender) = lower($2)";
+      "select * from users where lower(display_name) like lower('%' || $1 || '%') or lower(first_name) like lower('%' || $1 || '%') or lower(last_name) like lower('%' || $1 || '%') or lower(gender) = lower($2) or id = $3";
     // if (order) {
     //   sqlQuery += " order by " + sort + " " + order;
     // }
-    db.query(sqlQuery, [name, gender])
+    db.query(sqlQuery, [name, gender, id])
       .then((result) => {
         if (result.rows.length === 0) {
           return reject({ status: 404, err: "User Not Found" });
@@ -138,28 +138,28 @@ const updateUser = (id, body) => {
   });
 };
 
-const deleteUserFromServer = (id) => {
-  return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM users where id = $1";
-    db.query(sqlQuery, [id])
-      .then((data) => {
-        const response = {
-          data: data.rows,
-          msg: `User with id= ${id} was successfully deleted`,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const deleteUserFromServer = (id) => {
+//   return new Promise((resolve, reject) => {
+//     const sqlQuery = "DELETE FROM users where id = $1";
+//     db.query(sqlQuery, [id])
+//       .then((data) => {
+//         const response = {
+//           data: data.rows,
+//           msg: `User with id= ${id} was successfully deleted`,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 module.exports = {
   getUsersFromServer,
-  getSingleUserFromServer,
+  // getSingleUserFromServer,
   findUser,
   createNewUser,
   updateUser,
-  deleteUserFromServer,
+  // deleteUserFromServer,
 };

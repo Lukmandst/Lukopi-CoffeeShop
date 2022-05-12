@@ -4,7 +4,7 @@ const Router = express.Router();
 const promoController = require("../controllers/promo");
 
 Router.get("/all", promoController.getAllPromos);
-Router.get("/:id", promoController.getPromoById);
+// Router.get("/:id", promoController.getPromoById);
 Router.get("/", promoController.findPromoByQuery);
 Router.post("/", promoController.postNewPromo);
 Router.put("/:id", promoController.updatePromoById);

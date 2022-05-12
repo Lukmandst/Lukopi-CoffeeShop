@@ -112,22 +112,22 @@ const createNewTransaction = (body) => {
   });
 };
 
-const deleteTransactionFromServer = (id) => {
-  return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM transactions where id = $1";
-    db.query(sqlQuery, [id])
-      .then((data) => {
-        const response = {
-          data: data.rows,
-          msg: `Transactions with id= ${id} was successfully deleted`,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const deleteTransactionFromServer = (id) => {
+//   return new Promise((resolve, reject) => {
+//     const sqlQuery = "DELETE FROM transactions where id = $1";
+//     db.query(sqlQuery, [id])
+//       .then((data) => {
+//         const response = {
+//           data: data.rows,
+//           msg: `Transactions with id= ${id} was successfully deleted`,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 const sortProduct = () => {
   return new Promise((resolve, reject) => {
@@ -152,6 +152,6 @@ module.exports = {
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
-  deleteTransactionFromServer,
+  // deleteTransactionFromServer,
   sortProduct,
 };

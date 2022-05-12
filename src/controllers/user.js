@@ -2,7 +2,7 @@ const userModel = require("../models/user");
 const {
   getUsersFromServer,
   findUser,
-  getSingleUserFromServer,
+  // getSingleUserFromServer,
   createNewUser,
   updateUser,
   deleteUserFromServer,
@@ -26,18 +26,18 @@ const getAllUsers = (_, res) => {
     });
 };
 
-const getUserById = (req, res) => {
-  const id = req.params.id;
-  getSingleUserFromServer(id)
-    .then((result) => {
-      const { data } = result;
-      successResponseDefault(res, 200, data);
-    })
-    .catch((error) => {
-      const { err, status } = error;
-      errorResponseDefault(res, status, err);
-    });
-};
+// const getUserById = (req, res) => {
+//   const id = req.params.id;
+//   getSingleUserFromServer(id)
+//     .then((result) => {
+//       const { data } = result;
+//       successResponseDefault(res, 200, data);
+//     })
+//     .catch((error) => {
+//       const { err, status } = error;
+//       errorResponseDefault(res, status, err);
+//     });
+// };
 
 const findUserByQuery = (req, res) => {
   findUser(req.query)
@@ -91,7 +91,7 @@ const deleteUserById = (req, res) => {
 
 module.exports = {
   getAllUsers,
-  getUserById,
+  // getUserById,
   findUserByQuery,
   postNewUser,
   updateUserById,
