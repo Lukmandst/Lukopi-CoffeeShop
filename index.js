@@ -17,6 +17,7 @@ db.connect()
     server.use(express.urlencoded({ extended: false }));
     server.use(express.json());
     server.use(mainRouter);
+    server.use(express.static("public"));
 
     server.listen(PORT, () => {
       console.log(`Server is running at PORT ${PORT}`);

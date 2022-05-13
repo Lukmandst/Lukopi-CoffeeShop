@@ -5,6 +5,7 @@ const {
   // getSingleUserFromServer,
   createNewUser,
   updateUser,
+  imageUser,
   // deleteUserFromServer,
 } = userModel;
 
@@ -87,6 +88,18 @@ const updateUserById = (req, res) => {
 //       errorResponseDefault(res, status, err);
 //     });
 // };
+const updatePhotoUser = (req, res) => {
+  const { file = null } = req;
+  imageUser(req.userPayload.id, file)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 
 module.exports = {
   getAllUsers,
@@ -95,4 +108,5 @@ module.exports = {
   postNewUser,
   updateUserById,
   // deleteUserById,
+  updatePhotoUser,
 };

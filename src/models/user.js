@@ -138,6 +138,26 @@ const updateUser = (id, body) => {
   });
 };
 
+const imageUser = (id, file) => {
+  return new Promise((resolve, reject) => {
+    const picture = file.path.replace("public", "").replace(/\\/g, "/");
+    db.query("UPDATE users SET picture = $1 WHERE id = $2 RETURNING picture", [
+      picture,
+      id,
+    ])
+      .then((data) => {
+        const response = {
+          data: data.rows[0],
+          msg: "Your Profile Picture has been updated!",
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 // const deleteUserFromServer = (id) => {
 //   return new Promise((resolve, reject) => {
 //     const sqlQuery = "DELETE FROM users where id = $1";
@@ -162,4 +182,5 @@ module.exports = {
   createNewUser,
   updateUser,
   // deleteUserFromServer,
+  imageUser,
 };
