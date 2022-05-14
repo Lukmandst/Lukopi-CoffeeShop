@@ -6,10 +6,13 @@ const register = [
     .isEmpty()
     .isEmail()
     .normalizeEmail(),
-  body("pass", "Password must be at least 5 characters")
+  body("pass")
     .not()
     .isEmpty()
-    .isLength({ min: 5 }),
+    .isLength({ min: 5 })
+    .withMessage("Password must be at least 5 characters")
+    .matches(/\d/)
+    .withMessage("Password must contain a number"),
   body("passConfirmation", "Password does not match").custom(
     (value, { req }) => value === req.body.pass
   ),
