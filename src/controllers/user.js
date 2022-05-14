@@ -5,7 +5,7 @@ const {
   // getSingleUserFromServer,
   createNewUser,
   updateUser,
-  imageUser,
+  updateImageUser,
   // deleteUserFromServer,
 } = userModel;
 
@@ -90,7 +90,7 @@ const updateUserById = (req, res) => {
 // };
 const updatePhotoUser = (req, res) => {
   const { file = null } = req;
-  imageUser(req.userPayload.id, file)
+  updateImageUser(req.userPayload.id, file)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);

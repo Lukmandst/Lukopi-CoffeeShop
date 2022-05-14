@@ -138,7 +138,7 @@ const updateUser = (id, body) => {
   });
 };
 
-const imageUser = (id, file) => {
+const updateImageUser = (id, file) => {
   return new Promise((resolve, reject) => {
     const picture = file.path.replace("public", "").replace(/\\/g, "/");
     db.query("UPDATE users SET picture = $1 WHERE id = $2 RETURNING picture", [
@@ -182,5 +182,5 @@ module.exports = {
   createNewUser,
   updateUser,
   // deleteUserFromServer,
-  imageUser,
+  updateImageUser,
 };

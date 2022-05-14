@@ -11,7 +11,7 @@ Router.get("/all", userController.getAllUsers);
 Router.get("/", userController.findUserByQuery);
 Router.post("/", userController.postNewUser);
 Router.put("/edit", checkToken, userController.updateUserById);
-Router.patch("/", checkToken, imageUpload.single("picture"),userController.updatePhotoUser);
+Router.patch("/", checkToken, imageUpload.single("picture"), userController.updatePhotoUser);
 // Router.delete("/:id", userController.deleteUserById);
 
 module.exports = Router;
