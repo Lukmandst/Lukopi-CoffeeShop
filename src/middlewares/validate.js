@@ -1,12 +1,30 @@
-// const { body } = require("express-validator");
+const { body, validationResult } = require("express-validator");
+const validate = {};
+const register = [
+  body("email", "Your email is not valid")
+    .not()
+    .isEmpty()
+    .isEmail()
+    .normalizeEmail(),
+  body("pass", "Password must be at least 5 characters")
+    .not()
+    .isEmpty()
+    .isLength({ min: 5 }),
+  body("passConfirmation", "Password does not match").custom(
+    (value, { req }) => value === req.body.pass
+  ),
+];
 
-
-// const userValidation = [
-//   body("email", "Please include a valid email").isEmail(),
-//   body("password", "Password must be 6 or more characters").isLength({
-//     min: 6,
-//   }),
-// ];
+validate.formSignUp = [
+  register,
+  (req, res, next) => {
+    const error = validationResult(req);
+    if (!error.isEmpty()) {
+      return res.status(400).json({ error: error.array() });
+    }
+    next();
+  },
+];
 
 // // validate.queryFinde
 // validate.queryFind = (req, res, next) => {
@@ -39,6 +57,4 @@
 //     next();
 //   };
 
-// module.exports = {
-//     userValidation
-// };
+module.exports = validate;
