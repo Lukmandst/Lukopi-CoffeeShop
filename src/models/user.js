@@ -140,6 +140,9 @@ const updateUser = (id, body) => {
 
 const updateImageUser = (id, file) => {
   return new Promise((resolve, reject) => {
+    if (!file) {
+      return reject({ status: 400, err: "Image not found" });
+    }
     const picture = file.path.replace("public", "").replace(/\\/g, "/");
     db.query("UPDATE users SET picture = $1 WHERE id = $2 RETURNING picture", [
       picture,
