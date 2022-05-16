@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProductFromServer,
   sortProduct,
-  sortByPrice
+  sortByPrice,
 } = productModel;
 
 const {
@@ -18,15 +18,17 @@ const {
 } = require("../helpers/response");
 
 const getAllProducts = (req, res) => {
-  getProductsFromServer(req.query)
+  getProductsFromServer(req.query,req.route)
     .then((result) => {
-      const { totalData, totalPage, data } = result;
+      const { totalData, totalPage, data, nextPage, previousPage } = result;
       const meta = {
         totalData,
         totalPage,
-        route: `/product${req.route.path}?`,
-        query: req.query,
-        page: req.query.page,
+        // route: `/product${req.route.path}?`,
+        // query: req.query,
+        page: parseInt(req.query.page),
+        nextPage,
+        previousPage,
       };
       successResponsewihMeta(res, 200, data, meta);
     })
@@ -131,5 +133,5 @@ module.exports = {
   updateProductById,
   deleteProductById,
   sortProductByLatest,
-  sortProductBetweenPrice
+  sortProductBetweenPrice,
 };

@@ -1,8 +1,8 @@
 const db = require("../config/database");
 
-const getProductsFromServer = (query) => {
+const getProductsFromServer = (query, route) => {
   return new Promise((resolve, reject) => {
-    const { page = 1, limit = 5 } = query;
+    const { page = 1, limit = 3 } = query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
     db.query("SELECT * FROM products ORDER BY name LIMIT $1 OFFSET $2", [
       Number(limit),
@@ -18,6 +18,14 @@ const getProductsFromServer = (query) => {
             response.totalPage = Math.ceil(
               response.totalData / parseInt(limit)
             );
+            if (page < response.totalPage)
+              response.nextPage = `${route.path}?page=${
+                parseInt(page) + 1
+              }`;
+            if (offset > 0)
+              response.previousPage = `${route.path}?page=${
+                parseInt(page) - 1
+              }`;
             resolve(response);
           })
           .catch((err) => {
