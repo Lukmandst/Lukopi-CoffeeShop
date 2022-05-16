@@ -2,12 +2,13 @@ const express = require("express");
 const Router = express.Router();
 
 const transactionController = require("../controllers/transaction");
+const { checkToken } = require("../middlewares/auth");
 
-Router.get("/all", transactionController.getAllTransactions);
+// Router.get("/all", transactionController.getAllTransactions);
 Router.get("/favorite", transactionController.sortPopularProduct);
-Router.get("/:id", transactionController.getTransactionById);
+Router.get("/history", checkToken, transactionController.getUserTransactions);
 Router.get("/", transactionController.findTransactionByQuery);
-Router.post("/", transactionController.postNewTransaction);
+Router.post("/", checkToken, transactionController.postNewTransaction);
 // Router.delete("/", transactionController.deleteTransactionById);
 
-module.exports=Router;
+module.exports = Router;

@@ -5,7 +5,7 @@ const {
   errorResponseDefault,
   successResponseDefault,
 } = require("../helpers/response");
-const { signUp, getPassbyUserEmail } = require("../models/auth");
+const { signUp, getInfobyUserEmail } = require("../models/auth");
 
 const auth = {};
 
@@ -36,7 +36,7 @@ auth.signIn = async (req, res) => {
     const {
       body: { email, pass },
     } = req;
-    const data = await getPassbyUserEmail(email);
+    const data = await getInfobyUserEmail(email);
     const result = await bcrypt.compare(pass, data.pass);
     if (!result)
       return errorResponseDefault(res, 400, {
@@ -44,6 +44,7 @@ auth.signIn = async (req, res) => {
       });
     const payload = {
       id: data.id,
+      name: data.display_name,
       email,
     };
     const jwtOptions = {

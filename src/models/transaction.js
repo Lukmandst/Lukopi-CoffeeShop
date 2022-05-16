@@ -1,24 +1,25 @@
 const db = require("../config/database");
+const { v4: uuidV4 } = require("uuid");
 
-const getTransactionsFromServer = () => {
-  return new Promise((resolve, reject) => {
-    db.query("SELECT * FROM transactions")
-      .then((result) => {
-        const response = {
-          total: result.rowCount,
-          data: result.rows,
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const getTransactionsFromServer = () => {
+//   return new Promise((resolve, reject) => {
+//     db.query("SELECT * FROM transactions")
+//       .then((result) => {
+//         const response = {
+//           total: result.rowCount,
+//           data: result.rows,
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from transactions where id = $1";
+    const sqlQuery = "select * from transactions where users_id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -78,30 +79,23 @@ const findTransaction = (query) => {
   });
 };
 
-const createNewTransaction = (body) => {
+const createNewTransaction = (user_id, name,body) => {
   return new Promise((resolve, reject) => {
-    const {
-      date,
-      buyer_name,
-      quantity,
+    const { quantity, product_id, product_size } = body;
+    const time = new Date(Date.now());
+    const id = uuidV4();
+    const values = [
+      id,
+      time,
+      name,
       product_id,
+      quantity,
       product_size,
-      quantity_above,
-      quantity_less,
       user_id,
-    } = body;
+    ];
     const sqlQuery =
-      "INSERT INTO transactions (date, users_display_name, products_id, quantity, sizes_id, users_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
-    db.query(sqlQuery, [
-      date,
-      buyer_name,
-      quantity,
-      product_id,
-      product_size,
-      quantity_above,
-      quantity_less,
-      user_id,
-    ])
+      "INSERT INTO transactions (id, date, users_display_name, products_id, quantity, sizes_id, users_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+    db.query(sqlQuery, values)
       .then(({ rows }) => {
         const response = {
           data: rows[0],
@@ -148,7 +142,7 @@ const sortProduct = () => {
 };
 
 module.exports = {
-  getTransactionsFromServer,
+  // getTransactionsFromServer,
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
