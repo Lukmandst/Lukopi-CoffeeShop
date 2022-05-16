@@ -28,6 +28,11 @@ validate.formSignUp = [
     next();
   },
 ];
+validate.attachedImage = (req, res, next) => {
+  if (!req.file)
+    return res.status(422).json({ msg: "Add a picture to create the product!" });
+    next();
+};
 
 // // validate.queryFinde
 // validate.queryFind = (req, res, next) => {

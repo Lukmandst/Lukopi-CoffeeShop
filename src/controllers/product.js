@@ -18,7 +18,7 @@ const {
 } = require("../helpers/response");
 
 const getAllProducts = (req, res) => {
-  getProductsFromServer(req.query,req.route)
+  getProductsFromServer(req.query, req.route)
     .then((result) => {
       const { totalData, totalPage, data, nextPage, previousPage } = result;
       const meta = {
@@ -64,7 +64,8 @@ const findProductByQuery = (req, res) => {
 };
 
 const postNewProduct = (req, res) => {
-  createNewProduct(req.body)
+  const { file = null } = req;
+  createNewProduct(req.body, file)
     .then((result) => {
       const { data } = result;
       successResponseDefault(res, 200, data);

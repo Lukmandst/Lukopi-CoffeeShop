@@ -1,4 +1,5 @@
 const db = require("../config/database");
+const { v4: uuidV4 } = require("uuid");
 
 const getProductsFromServer = (query, route) => {
   return new Promise((resolve, reject) => {
@@ -19,9 +20,7 @@ const getProductsFromServer = (query, route) => {
               response.totalData / parseInt(limit)
             );
             if (page < response.totalPage)
-              response.nextPage = `${route.path}?page=${
-                parseInt(page) + 1
-              }`;
+              response.nextPage = `${route.path}?page=${parseInt(page) + 1}`;
             if (offset > 0)
               response.previousPage = `${route.path}?page=${
                 parseInt(page) - 1
@@ -83,7 +82,7 @@ const findProduct = (query) => {
   });
 };
 
-const createNewProduct = (body) => {
+const createNewProduct = (body, file) => {
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -94,9 +93,15 @@ const createNewProduct = (body) => {
       delivery_start,
       delivery_end,
     } = body;
+    const id = uuidV4();
+    const image = file.path.replace("public", "").replace(/\\/g, "/");
+    if (image === null || image=== undefined || image === 0 ) {
+      return reject({ status: 400, err: "Image not found" });
+    }
     const sqlQuery =
-      "INSERT INTO products (name, categories_id, price, stock, details, delivery_start, delivery_end) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+      "INSERT INTO products (id, name, categories_id, price, stock, details, delivery_start, delivery_end, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
     db.query(sqlQuery, [
+      id,
       name,
       category,
       price,
@@ -104,10 +109,12 @@ const createNewProduct = (body) => {
       details,
       delivery_start,
       delivery_end,
+      image,
     ])
       .then(({ rows }) => {
         const response = {
           data: rows[0],
+          // msg: "New product succesfully added!",
         };
         resolve(response);
       })
