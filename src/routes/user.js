@@ -10,7 +10,7 @@ Router.get("/all", userController.getAllUsers);
 // Router.get("/:id", userController.getUserById);
 Router.get("/", userController.findUserByQuery);
 Router.post("/", userController.postNewUser);
-Router.put("/edit", checkToken, userController.updateUserById);
+Router.put("/edit", checkToken, imageUpload.single("photo"),userController.updateUserById);
 Router.patch("/", checkToken, imageUpload.single("picture"), userController.updatePhotoUser);
 // Router.delete("/:id", userController.deleteUserById);
 

@@ -65,7 +65,8 @@ const postNewUser = (req, res) => {
 };
 
 const updateUserById = (req, res) => {
-  updateUser(req.userPayload.id, req.body)
+  const { file = null } = req;
+  updateUser(req.userPayload.id, req.body, file)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);
