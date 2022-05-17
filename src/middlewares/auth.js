@@ -30,7 +30,7 @@ const checkToken = (req, res, next) => {
     (err, payload) => {
       if (err && err.name === "TokenExpiredError")
         return errorResponseDefault(res, 401, {
-          msg: "Your session was expired, please Sign In again!",
+          msg: "Time Out!, please Sign In again",
         });
       req.userPayload = payload;
       console.log(payload);
