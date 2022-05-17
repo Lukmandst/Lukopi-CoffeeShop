@@ -20,9 +20,9 @@ const getProductsFromServer = (query, route) => {
               response.totalData / parseInt(limit)
             );
             if (page < response.totalPage)
-              response.nextPage = `${route.path}?page=${parseInt(page) + 1}`;
+              response.nextPage = `/product${route.path}?page=${parseInt(page) + 1}`;
             if (offset > 0)
-              response.previousPage = `${route.path}?page=${
+              response.previousPage = `/product${route.path}?page=${
                 parseInt(page) - 1
               }`;
             resolve(response);

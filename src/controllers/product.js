@@ -52,10 +52,19 @@ const getAllProducts = (req, res) => {
 // };
 
 const findProductByQuery = (req, res) => {
-  findProduct(req.query)
+  findProduct(req.query, req.route)
     .then((result) => {
-      const { data, total } = result;
-      successResponseDefault(res, 200, data, total);
+      const { totalData, totalPage, data, nextPage, previousPage } = result;
+      const meta = {
+        totalData,
+        totalPage,
+        // route: `/product${req.route.path}?`,
+        // query: req.query,
+        page: parseInt(req.query.page),
+        nextPage,
+        previousPage,
+      };
+      successResponsewihMeta(res, 200, data, meta);
     })
     .catch((error) => {
       const { err, status } = error;

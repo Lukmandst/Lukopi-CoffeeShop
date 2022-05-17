@@ -13,13 +13,23 @@ const {
   successResponseDefault,
   errorResponseDefault,
   successResponseWithMsg,
+  successResponsewihMeta,
 } = require("../helpers/response");
 
-const getAllUsers = (_, res) => {
-  getUsersFromServer()
+const getAllUsers = (req, res) => {
+  getUsersFromServer(req.query, req.route)
     .then((result) => {
-      const { data, total } = result;
-      successResponseDefault(res, 200, data, total);
+      const { totalData, totalPage, data, nextPage, previousPage } = result;
+      const meta = {
+        totalData,
+        totalPage,
+        // route: `/product${req.route.path}?`,
+        // query: req.query,
+        page: parseInt(req.query.page),
+        nextPage,
+        previousPage,
+      };
+      successResponsewihMeta(res, 200, data, meta);
     })
     .catch((error) => {
       const { err, status } = error;
@@ -41,10 +51,19 @@ const getAllUsers = (_, res) => {
 // };
 
 const findUserByQuery = (req, res) => {
-  findUser(req.query)
+  findUser(req.query, req.route)
     .then((result) => {
-      const { data } = result;
-      successResponseDefault(res, 200, data);
+      const { total,totalData, totalPage, data, nextPage, previousPage } = result;
+      const meta = {
+        totalData,
+        totalPage,
+        // route: `/product${req.route.path}?`,
+        // query: req.query,
+        page: parseInt(req.query.page),
+        nextPage,
+        previousPage,
+      };
+      successResponsewihMeta(res, 200, {total,data}, meta);
     })
     .catch((error) => {
       const { err, status } = error;
