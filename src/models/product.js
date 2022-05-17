@@ -3,12 +3,16 @@ const { v4: uuidV4 } = require("uuid");
 
 const getProductsFromServer = (query, route) => {
   return new Promise((resolve, reject) => {
-    const { page = 1, limit = 3 } = query;
+    const { order, sort, page = 1, limit = 3 } = query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
-    db.query("SELECT * FROM products ORDER BY name LIMIT $1 OFFSET $2", [
-      Number(limit),
-      offset,
-    ])
+    let sqlQuery = "SELECT * FROM products";
+    if (order) {
+      sqlQuery += " order by " + sort + " " + order;
+    }
+    if (page) {
+      sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
+    }
+    db.query(sqlQuery)
       .then((result) => {
         const response = {
           data: result.rows,
@@ -58,14 +62,28 @@ const getProductsFromServer = (query, route) => {
 //   });
 // };
 
-const findProduct = (query) => {
+const findProduct = (query, route) => {
   return new Promise((resolve, reject) => {
-    const { name, price, category, price_above, price_under, order, sort, id } =
-      query;
+    const {
+      name,
+      price,
+      category,
+      price_above,
+      price_under,
+      order,
+      sort,
+      id,
+      page = 1,
+      limit = 3,
+    } = query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
     let sqlQuery =
       "select name, price, categories_id from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6";
     if (order) {
       sqlQuery += " order by " + sort + " " + order;
+    }
+    if (page) {
+      sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
     }
     db.query(sqlQuery, [name, price, category, price_above, price_under, id])
       .then((result) => {
@@ -76,7 +94,25 @@ const findProduct = (query) => {
           total: result.rowCount,
           data: result.rows,
         };
-        resolve(response);
+        db.query("SELECT COUNT(*) AS total_product FROM products")
+          .then((result) => {
+            response.totalData = parseInt(result.rows[0]["total_product"]);
+            response.totalPage = Math.ceil(
+              response.totalData / parseInt(limit)
+            );
+            if (page < response.totalPage)
+              response.nextPage = `/product${route.path}?page=${
+                parseInt(page) + 1
+              }`;
+            if (offset > 0)
+              response.previousPage = `/product${route.path}?page=${
+                parseInt(page) - 1
+              }`;
+            resolve(response);
+          })
+          .catch((err) => {
+            reject({ status: 500, err });
+          });
       })
       .catch((err) => {
         reject({ status: 500, err });
@@ -153,8 +189,8 @@ const updateProduct = (id, body, file) => {
       delivery_end,
     } = body;
     const image = file
-    ? file.path.replace("public", "").replace(/\\/g, "/")
-    : null;
+      ? file.path.replace("public", "").replace(/\\/g, "/")
+      : null;
     const sqlQuery =
       "UPDATE products SET name= COALESCE($1, name), categories_id= COALESCE($2, categories_id), price= COALESCE($3, price), stock= COALESCE($4, stock), details= COALESCE($5, details), delivery_start= COALESCE($6, delivery_start), delivery_end= COALESCE($7, delivery_end), image = COALESCE(NULLIF($9,''), image) WHERE id=$8 RETURNING *";
     db.query(sqlQuery, [
