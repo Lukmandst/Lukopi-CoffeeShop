@@ -37,6 +37,7 @@ auth.signIn = async (req, res) => {
       body: { email, pass },
     } = req;
     const data = await getInfobyUserEmail(email);
+    const name = data.display_name;
     const result = await bcrypt.compare(pass, data.pass);
     if (!result)
       return errorResponseDefault(res, 400, {
@@ -44,7 +45,7 @@ auth.signIn = async (req, res) => {
       });
     const payload = {
       id: data.id,
-      name: data.display_name,
+      name,
       email,
     };
     const jwtOptions = {
@@ -52,7 +53,7 @@ auth.signIn = async (req, res) => {
       expiresIn: "240s",
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
-    successResponseDefault(res, 200, { email, token }, null);
+    successResponseDefault(res, 200, { name, email, token }, null);
   } catch (error) {
     const { status = 500, err } = error;
     errorResponseDefault(res, status, err);
