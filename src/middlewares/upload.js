@@ -15,7 +15,7 @@ const imageStorage = multer.diskStorage({
 });
 
 const limit = {
-  fileSise: 4e6, // 4mb
+  fileSize: 4e6, // 4mb
 };
 
 const imageFilter = (req, file, cb) => {
