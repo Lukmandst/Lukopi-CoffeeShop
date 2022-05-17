@@ -17,7 +17,7 @@ Router.post(
   attachedImage,
   productController.postNewProduct
 );
-Router.patch("/:id", productController.updateProductById);
+Router.patch("/:id", imageUpload.single("image"),productController.updateProductById);
 Router.delete("/:id", productController.deleteProductById);
 
 module.exports = Router;

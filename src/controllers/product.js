@@ -100,7 +100,8 @@ const deleteProductById = (req, res) => {
 
 const updateProductById = (req, res) => {
   const id = req.params.id;
-  updateProduct(id, req.body)
+  const { file = null } = req;
+  updateProduct(id, req.body, file)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);

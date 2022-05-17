@@ -20,7 +20,9 @@ const getProductsFromServer = (query, route) => {
               response.totalData / parseInt(limit)
             );
             if (page < response.totalPage)
-              response.nextPage = `/product${route.path}?page=${parseInt(page) + 1}`;
+              response.nextPage = `/product${route.path}?page=${
+                parseInt(page) + 1
+              }`;
             if (offset > 0)
               response.previousPage = `/product${route.path}?page=${
                 parseInt(page) - 1
@@ -95,9 +97,9 @@ const createNewProduct = (body, file) => {
     } = body;
     const id = uuidV4();
     const image = file.path.replace("public", "").replace(/\\/g, "/");
-    if (image === null || image=== undefined || image === 0 ) {
-      return reject({ status: 400, err: "Image not found" });
-    }
+    // if (image === null || image=== undefined || image === 0 ) {
+    //   return reject({ status: 400, err: "Image not found" });
+    // }
     const sqlQuery =
       "INSERT INTO products (id, name, categories_id, price, stock, details, delivery_start, delivery_end, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
     db.query(sqlQuery, [
@@ -139,7 +141,7 @@ const deleteProductFromServer = (id) => {
   });
 };
 
-const updateProduct = (id, body) => {
+const updateProduct = (id, body, file) => {
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -150,8 +152,11 @@ const updateProduct = (id, body) => {
       delivery_start,
       delivery_end,
     } = body;
+    const image = file
+    ? file.path.replace("public", "").replace(/\\/g, "/")
+    : null;
     const sqlQuery =
-      "UPDATE products SET name= COALESCE($1, name), categories_id= COALESCE($2, categories_id), price= COALESCE($3, price), stock= COALESCE($4, stock), details= COALESCE($5, details), delivery_start= COALESCE($6, delivery_start), delivery_end= COALESCE($7, delivery_end) WHERE id=$8 RETURNING *";
+      "UPDATE products SET name= COALESCE($1, name), categories_id= COALESCE($2, categories_id), price= COALESCE($3, price), stock= COALESCE($4, stock), details= COALESCE($5, details), delivery_start= COALESCE($6, delivery_start), delivery_end= COALESCE($7, delivery_end), image = COALESCE(NULLIF($9,''), image) WHERE id=$8 RETURNING *";
     db.query(sqlQuery, [
       name,
       category,
@@ -161,6 +166,7 @@ const updateProduct = (id, body) => {
       delivery_start,
       delivery_end,
       id,
+      image,
     ])
       .then((data) => {
         const response = {
