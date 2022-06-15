@@ -33,24 +33,24 @@ const getUsersFromServer = (query, route) => {
   });
 };
 
-// const getSingleUserFromServer = (id) => {
-//   return new Promise((resolve, reject) => {
-//     const sqlQuery = "select * from users where id = $1";
-//     db.query(sqlQuery, [id])
-//       .then((data) => {
-//         if (data.rows.length === 0) {
-//           return reject({ status: 404, err: "User Not Found" });
-//         }
-//         const response = {
-//           data: data.rows,
-//         };
-//         resolve(response);
-//       })
-//       .catch((err) => {
-//         reject({ status: 500, err });
-//       });
-//   });
-// };
+const getSingleUserFromServer = (id) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "select * from users where id = $1";
+    db.query(sqlQuery, [id])
+      .then((data) => {
+        if (data.rows.length === 0) {
+          return reject({ status: 404, err: "User Not Found" });
+        }
+        const response = {
+          data: data.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 const findUser = (query, route) => {
   return new Promise((resolve, reject) => {
@@ -210,7 +210,7 @@ const updateImageUser = (id, file) => {
 
 module.exports = {
   getUsersFromServer,
-  // getSingleUserFromServer,
+  getSingleUserFromServer,
   findUser,
   createNewUser,
   updateUser,

@@ -54,7 +54,8 @@ const getAllProducts = (req, res) => {
 const findProductByQuery = (req, res) => {
   findProduct(req.query, req.route)
     .then((result) => {
-      const { totalData, totalPage, data, nextPage, previousPage } = result;
+      const { totalData, totalPage, total, data, nextPage, previousPage } =
+        result;
       const meta = {
         totalData,
         totalPage,
@@ -64,7 +65,7 @@ const findProductByQuery = (req, res) => {
         nextPage,
         previousPage,
       };
-      successResponsewihMeta(res, 200, data, meta);
+      successResponsewihMeta(res, 200, data, total, meta);
     })
     .catch((error) => {
       const { err, status } = error;

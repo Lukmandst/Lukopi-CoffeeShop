@@ -10,5 +10,5 @@ Router.get("/history", checkToken, transactionController.getUserTransactions);
 Router.get("/", transactionController.findTransactionByQuery);
 Router.post("/", checkToken, transactionController.postNewTransaction);
 // Router.delete("/", transactionController.deleteTransactionById);
-
+Router.delete("/", checkToken, transactionController.deleteUserTransactions);
 module.exports = Router;

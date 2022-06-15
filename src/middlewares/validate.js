@@ -1,21 +1,30 @@
+// const db = require("../config/database");
 const { body, validationResult } = require("express-validator");
+// const { getUserByEmail } = require("../models/auth");
+// const { errorResponseDefault } = require("../helpers/response");
 const validate = {};
 const register = [
-  body("email", "Your email is not valid")
-    .not()
-    .isEmpty()
+  body("email")
     .isEmail()
+    .withMessage("Email format must be youremail@email")
+    // .custom((value) => {
+    //   return new Promise((resolve, reject) => {
+    //     const sqlQuery =
+    //       "SELECT display_name, email FROM users WHERE email = $1";
+    //     db.query(sqlQuery, [value]).then((result) => {
+    //       if (result.rowCount > 0) reject("Email is already registered");
+    //     });
+    //   });
+    // })
     .normalizeEmail(),
   body("pass")
-    .not()
-    .isEmpty()
     .isLength({ min: 5 })
     .withMessage("Password must be at least 5 characters")
     .matches(/\d/)
     .withMessage("Password must contain a number"),
-  body("passConfirmation", "Password does not match").custom(
-    (value, { req }) => value === req.body.pass
-  ),
+  // body("passConfirmation", "Password does not match").custom(
+  //   (value, { req }) => value === req.body.pass
+  // ),
 ];
 
 validate.formSignUp = [
@@ -30,8 +39,10 @@ validate.formSignUp = [
 ];
 validate.attachedImage = (req, res, next) => {
   if (!req.file)
-    return res.status(422).json({ msg: "Add a picture to create the product!" });
-    next();
+    return res
+      .status(422)
+      .json({ msg: "Add a picture to create the product!" });
+  next();
 };
 
 // // validate.queryFinde

@@ -1,41 +1,49 @@
 const db = require("../config/database");
 const { v4: uuidV4 } = require("uuid");
 
-const getProductsFromServer = (query, route) => {
+const getProductsFromServer = (
+  query
+  // route
+) => {
   return new Promise((resolve, reject) => {
-    const { order, sort, page = 1, limit = 3 } = query;
-    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const {
+      order,
+      sort,
+      // page = 1,
+      // limit = 10
+    } = query;
+    // const offset = (parseInt(page) - 1) * parseInt(limit);
     let sqlQuery = "SELECT * FROM products";
     if (order) {
       sqlQuery += " order by " + sort + " " + order;
     }
-    if (page) {
-      sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
-    }
+    // if (page) {
+    //   sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
+    // }
     db.query(sqlQuery)
       .then((result) => {
         const response = {
           data: result.rows,
         };
-        db.query("SELECT COUNT(*) AS total_product FROM products")
-          .then((result) => {
-            response.totalData = parseInt(result.rows[0]["total_product"]);
-            response.totalPage = Math.ceil(
-              response.totalData / parseInt(limit)
-            );
-            if (page < response.totalPage)
-              response.nextPage = `/product${route.path}?page=${
-                parseInt(page) + 1
-              }`;
-            if (offset > 0)
-              response.previousPage = `/product${route.path}?page=${
-                parseInt(page) - 1
-              }`;
-            resolve(response);
-          })
-          .catch((err) => {
-            reject({ status: 500, err });
-          });
+        // db.query("SELECT COUNT(*) AS total_product FROM products")
+        //   .then((result) => {
+        //     response.totalData = parseInt(result.rows[0]["total_product"]);
+        //     response.totalPage = Math.ceil(
+        //       response.totalData / parseInt(limit)
+        //     );
+        //     if (page < response.totalPage)
+        //       response.nextPage = `/product${route.path}?page=${
+        //         parseInt(page) + 1
+        //       }`;
+        //     if (offset > 0)
+        //       response.previousPage = `/product${route.path}?page=${
+        //         parseInt(page) - 1
+        //       }`;
+        resolve(response);
+        ////})
+        // .catch((err) => {
+        //   reject({ status: 500, err });
+        // });
       })
       .catch((err) => {
         reject({ status: 500, err });
@@ -62,7 +70,10 @@ const getProductsFromServer = (query, route) => {
 //   });
 // };
 
-const findProduct = (query, route) => {
+const findProduct = (
+  query
+  //  route
+) => {
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -73,18 +84,28 @@ const findProduct = (query, route) => {
       order,
       sort,
       id,
-      page = 1,
-      limit = 3,
+      // page = 1,
+      // limit = 2,
     } = query;
-    const offset = (parseInt(page) - 1) * parseInt(limit);
+    // const offset = (parseInt(page) - 1) * parseInt(limit);
     let sqlQuery =
-      "select name, price, categories_id from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6";
+      "select * from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6";
     if (order) {
       sqlQuery += " order by " + sort + " " + order;
     }
-    if (page) {
-      sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
-    }
+    // if (page) {
+    //   sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
+    // }
+    // console.log(sqlQuery);
+    // console.log(Array.isArray(query));
+    // console.log(typeof query);
+    // console.log(Object.values(query));
+    // let objq = Object.entries(query);
+    // console.log(objq);
+    // console.log("from " + Object.fromEntries(objq));
+    // let paramInput = `${Object.keys(query)}=${Object.values(query)}`; // only for 1 param
+    // console.log(paramInput);
+
     db.query(sqlQuery, [name, price, category, price_above, price_under, id])
       .then((result) => {
         if (result.rows.length === 0) {
@@ -94,25 +115,29 @@ const findProduct = (query, route) => {
           total: result.rowCount,
           data: result.rows,
         };
-        db.query("SELECT COUNT(*) AS total_product FROM products")
-          .then((result) => {
-            response.totalData = parseInt(result.rows[0]["total_product"]);
-            response.totalPage = Math.ceil(
-              response.totalData / parseInt(limit)
-            );
-            if (page < response.totalPage)
-              response.nextPage = `/product${route.path}?page=${
-                parseInt(page) + 1
-              }`;
-            if (offset > 0)
-              response.previousPage = `/product${route.path}?page=${
-                parseInt(page) - 1
-              }`;
-            resolve(response);
-          })
-          .catch((err) => {
-            reject({ status: 500, err });
-          });
+        console.log("bawah");
+        // db.query(
+        //   "select * from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6",
+        //   [name, price, category, price_above, price_under, id]
+        // )
+        //   .then((result) => {
+        //     response.totalData = parseInt(result.rowCount);
+        //     response.totalPage = Math.ceil(
+        //       response.totalData / parseInt(limit)
+        //     );
+        //     if (page < response.totalPage)
+        //       response.nextPage = `/product${route.path}?page=${
+        //         parseInt(page) + 1
+        //       }&${paramInput}`;
+        //     if (offset > 0)
+        //       response.previousPage = `/product${route.path}?page=${
+        //         parseInt(page) - 1
+        //       }${paramInput}`;
+        resolve(response);
+        // })
+        // .catch((err) => {
+        //   reject({ status: 500, err });
+        // });
       })
       .catch((err) => {
         reject({ status: 500, err });

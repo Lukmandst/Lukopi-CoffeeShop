@@ -19,7 +19,8 @@ const { v4: uuidV4 } = require("uuid");
 
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "select * from transactions where users_id = $1";
+    const sqlQuery =
+      "select * from transactions where users_id = $1 AND deleted_at IS NULL ORDER BY DATE DESC";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -79,9 +80,9 @@ const findTransaction = (query) => {
   });
 };
 
-const createNewTransaction = (user_id, name,body) => {
+const createNewTransaction = (user_id, name, body) => {
   return new Promise((resolve, reject) => {
-    const { quantity, product_id, product_size } = body;
+    const { quantity, product_id, product_size, delivery } = body;
     const time = new Date(Date.now());
     const id = uuidV4();
     const values = [
@@ -92,9 +93,10 @@ const createNewTransaction = (user_id, name,body) => {
       quantity,
       product_size,
       user_id,
+      delivery,
     ];
     const sqlQuery =
-      "INSERT INTO transactions (id, date, users_display_name, products_id, quantity, sizes_id, users_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
+      "INSERT INTO transactions (id, date, users_display_name, products_id, quantity, sizes_id, users_id, delivery) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)  RETURNING *";
     db.query(sqlQuery, values)
       .then(({ rows }) => {
         const response = {
@@ -141,6 +143,25 @@ const sortProduct = () => {
   });
 };
 
+const deleteTransactionsFromUsers = (id) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery =
+      "UPDATE transactions SET deleted_at =$2 WHERE users_id = $1";
+    const deletedDate = new Date(Date.now());
+    db.query(sqlQuery, [id, deletedDate])
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: "All transaction was successfully deleted",
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
+
 module.exports = {
   // getTransactionsFromServer,
   getSingleTransactionFromServer,
@@ -148,4 +169,5 @@ module.exports = {
   createNewTransaction,
   // deleteTransactionFromServer,
   sortProduct,
+  deleteTransactionsFromUsers,
 };

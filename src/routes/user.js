@@ -7,7 +7,7 @@ const imageUpload = require("../middlewares/upload");
 
 // Router User
 Router.get("/all", userController.getAllUsers);
-// Router.get("/:id", userController.getUserById);
+Router.get("/info", checkToken, userController.getUserById);
 Router.get("/", userController.findUserByQuery);
 Router.post("/", userController.postNewUser);
 Router.patch("/edit", checkToken, imageUpload.single("photo"),userController.updateUserById);

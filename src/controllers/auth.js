@@ -11,12 +11,12 @@ const auth = {};
 
 auth.signUp = (req, res) => {
   const {
-    body: { email, pass },
+    body: { email, pass, phone },
   } = req;
   bcrypt
     .hash(pass, 9)
     .then((hashedPass) => {
-      signUp(email, hashedPass)
+      signUp(email, hashedPass, phone)
         .then((result) => {
           const { data, msg } = result;
           successResponseWithMsg(res, 201, data, msg);
@@ -38,6 +38,7 @@ auth.signIn = async (req, res) => {
     } = req;
     const data = await getInfobyUserEmail(email);
     const name = data.display_name;
+    const role = data.role;
     const result = await bcrypt.compare(pass, data.pass);
     if (!result)
       return errorResponseDefault(res, 400, {
@@ -47,13 +48,14 @@ auth.signIn = async (req, res) => {
       id: data.id,
       name,
       email,
+      role,
     };
     const jwtOptions = {
       issuer: process.env.JWT_ISSUER,
-      expiresIn: "240s",
+      expiresIn: "1d",
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
-    successResponseDefault(res, 200, { name, email, token }, null);
+    successResponseDefault(res, 200, { name, email, role, token }, null);
   } catch (error) {
     const { status = 500, err } = error;
     errorResponseDefault(res, status, err);

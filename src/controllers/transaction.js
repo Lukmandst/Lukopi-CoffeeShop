@@ -6,6 +6,7 @@ const {
   findTransaction,
   createNewTransaction,
   deleteTransactionFromServer,
+  deleteTransactionsFromUsers,
   sortProduct,
 } = transactionModel;
 
@@ -89,6 +90,18 @@ const sortPopularProduct = (req, res) => {
     });
 };
 
+const deleteUserTransactions = (req, res) => {
+  deleteTransactionsFromUsers(req.userPayload.id)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+
 module.exports = {
   // getAllTransactions,
   getUserTransactions,
@@ -96,4 +109,5 @@ module.exports = {
   postNewTransaction,
   deleteTransactionById,
   sortPopularProduct,
+  deleteUserTransactions
 };

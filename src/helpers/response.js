@@ -7,9 +7,10 @@ response.successResponseDefault = (res, status, data, total) => {
     err: null,
   });
 };
-response.successResponsewihMeta = (res, status, data, meta) => {
+response.successResponsewihMeta = (res, status, data, total, meta) => {
   res.status(status).json({
     data,
+    total,
     meta,
     err: null,
   });
