@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo tes 123 dicoba && exit 1",
-    "startDev": "nodemon"
+    "startDev": "nodemon",
+    "start": "node"
   },
   "keywords": [
     "api"
