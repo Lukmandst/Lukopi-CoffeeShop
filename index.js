@@ -6,7 +6,7 @@ const db = require("./src/config/database");
 const logger = require("morgan");
 // create express application
 const server = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const cors = require("cors");
 
 db.connect()
