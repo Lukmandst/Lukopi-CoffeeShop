@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo tes 123 dicoba && exit 1",
     "startDev": "nodemon",
-    "start": "node"
+    "start": "node index"
   },
   "keywords": [
     "api"
