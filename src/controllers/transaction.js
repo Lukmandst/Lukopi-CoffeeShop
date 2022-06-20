@@ -1,7 +1,7 @@
 const transactionModel = require("../models/transaction");
 
 const {
-  // getTransactionsFromServer,
+  getTransactionsFromServer,
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
@@ -16,17 +16,17 @@ const {
   successResponseWithMsg,
 } = require("../helpers/response");
 
-// const getAllTransactions = (_, res) => {
-//   getTransactionsFromServer()
-//     .then((result) => {
-//       const { data, total } = result;
-//       successResponseDefault(res, 200, data, total);
-//     })
-//     .catch((error) => {
-//       const { err, status } = error;
-//       errorResponseDefault(res, status, err);
-//     });
-// };
+const getAllTransactions = (_, res) => {
+  getTransactionsFromServer()
+    .then((result) => {
+      const { data, total } = result;
+      successResponseDefault(res, 200, data, total);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 
 const getUserTransactions = (req, res) => {
   getSingleTransactionFromServer(req.userPayload.id)
@@ -103,7 +103,7 @@ const deleteUserTransactions = (req, res) => {
 };
 
 module.exports = {
-  // getAllTransactions,
+  getAllTransactions,
   getUserTransactions,
   findTransactionByQuery,
   postNewTransaction,

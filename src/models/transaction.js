@@ -1,21 +1,21 @@
 const db = require("../config/database");
 const { v4: uuidV4 } = require("uuid");
 
-// const getTransactionsFromServer = () => {
-//   return new Promise((resolve, reject) => {
-//     db.query("SELECT * FROM transactions")
-//       .then((result) => {
-//         const response = {
-//           total: result.rowCount,
-//           data: result.rows,
-//         };
-//         resolve(response);
-//       })
-//       .catch((err) => {
-//         reject({ status: 500, err });
-//       });
-//   });
-// };
+const getTransactionsFromServer = () => {
+  return new Promise((resolve, reject) => {
+    db.query("select date(date), sum(t.total_price) as income from transactions t where t.date > now() -interval '1 week' group by date(date) order by date(date) desc")
+      .then((result) => {
+        const response = {
+          total: result.rowCount,
+          data: result.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
@@ -162,13 +162,32 @@ const deleteTransactionsFromUsers = (id) => {
       });
   });
 };
+const deleteOneTransactionsFromUsers = (id) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery =
+      "UPDATE transactions SET deleted_at =$2 WHERE transaction_id = $1";
+    const deletedDate = new Date(Date.now());
+    db.query(sqlQuery, [id, deletedDate])
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: `Transaction with id${id}  was successfully deleted`,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 module.exports = {
-  // getTransactionsFromServer,
+  getTransactionsFromServer,
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
   // deleteTransactionFromServer,
   sortProduct,
   deleteTransactionsFromUsers,
+  deleteOneTransactionsFromUsers,
 };
