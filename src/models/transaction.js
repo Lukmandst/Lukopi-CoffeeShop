@@ -129,7 +129,7 @@ const createNewTransaction = (user_id, name, body) => {
 const sortProduct = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT products_id, COUNT (products_id) FROM transactions GROUP BY products_id"
+      "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC"
     )
       .then((result) => {
         const response = {
