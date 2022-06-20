@@ -16,7 +16,9 @@ const getUsersFromServer = (query, route) => {
               response.totalData / parseInt(limit)
             );
             if (page < response.totalPage)
-              response.nextPage = `/user${route.path}?page=${parseInt(page) + 1}`;
+              response.nextPage = `/user${route.path}?page=${
+                parseInt(page) + 1
+              }`;
             if (offset > 0)
               response.previousPage = `/user${route.path}?page=${
                 parseInt(page) - 1
@@ -76,7 +78,9 @@ const findUser = (query, route) => {
         if (page < response.totalPage)
           response.nextPage = `/user${route.path}?page=${parseInt(page) + 1}`;
         if (offset > 0)
-          response.previousPage = `/user${route.path}?page=${parseInt(page) - 1}`;
+          response.previousPage = `/user${route.path}?page=${
+            parseInt(page) - 1
+          }`;
         resolve(response);
         resolve(response);
       })
@@ -137,9 +141,10 @@ const updateUser = (id, body, file) => {
       delivery_address,
     } = body;
     const updated_at = new Date(Date.now());
-    const photo = file
-      ? file.path.replace("public", "").replace(/\\/g, "/")
-      : null;
+    // const photo = file
+    //   ? file.path.replace("public", "").replace(/\\/g, "/")
+    //   : null;
+    const photo = file ? file.path : null;
     const sqlQuery =
       "UPDATE users SET first_name= COALESCE($1, first_name), last_name= COALESCE($2, last_name), display_name= COALESCE($3, display_name), email= COALESCE($4, email), phone_number= COALESCE($5, phone_number), gender= COALESCE($6, gender), birthdate= COALESCE($7, birthdate),  delivery_address= COALESCE($8, delivery_address), updated_at = $10, picture = COALESCE(NULLIF($11, ''), picture) WHERE id=$9 RETURNING *";
     db.query(sqlQuery, [
@@ -168,28 +173,28 @@ const updateUser = (id, body, file) => {
   });
 };
 
-const updateImageUser = (id, file) => {
-  return new Promise((resolve, reject) => {
-    if (!file) {
-      return reject({ status: 400, err: "Image not found" });
-    }
-    const picture = file.path.replace("public", "").replace(/\\/g, "/");
-    db.query("UPDATE users SET picture = $1 WHERE id = $2 RETURNING picture", [
-      picture,
-      id,
-    ])
-      .then((data) => {
-        const response = {
-          data: data.rows[0],
-          msg: "Your Profile Picture has been updated!",
-        };
-        resolve(response);
-      })
-      .catch((err) => {
-        reject({ status: 500, err });
-      });
-  });
-};
+// const updateImageUser = (id, file) => {
+//   return new Promise((resolve, reject) => {
+//     if (!file) {
+//       return reject({ status: 400, err: "Image not found" });
+//     }
+//     const picture = file.path.replace("public", "").replace(/\\/g, "/");
+//     db.query("UPDATE users SET picture = $1 WHERE id = $2 RETURNING picture", [
+//       picture,
+//       id,
+//     ])
+//       .then((data) => {
+//         const response = {
+//           data: data.rows[0],
+//           msg: "Your Profile Picture has been updated!",
+//         };
+//         resolve(response);
+//       })
+//       .catch((err) => {
+//         reject({ status: 500, err });
+//       });
+//   });
+// };
 
 // const deleteUserFromServer = (id) => {
 //   return new Promise((resolve, reject) => {
@@ -215,5 +220,5 @@ module.exports = {
   createNewUser,
   updateUser,
   // deleteUserFromServer,
-  updateImageUser,
+  // updateImageUser,
 };

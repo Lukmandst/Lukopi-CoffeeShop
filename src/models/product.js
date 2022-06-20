@@ -157,7 +157,8 @@ const createNewProduct = (body, file) => {
       delivery_end,
     } = body;
     const id = uuidV4();
-    const image = file.path.replace("public", "").replace(/\\/g, "/");
+    // const image = file.path.replace("public", "").replace(/\\/g, "/");
+    const image = file.path;
     // if (image === null || image=== undefined || image === 0 ) {
     //   return reject({ status: 400, err: "Image not found" });
     // }
@@ -213,9 +214,10 @@ const updateProduct = (id, body, file) => {
       delivery_start,
       delivery_end,
     } = body;
-    const image = file
-      ? file.path.replace("public", "").replace(/\\/g, "/")
-      : null;
+    // const image = file
+    //   ? file.path.replace("public", "").replace(/\\/g, "/")
+    //   : null;
+    const image = file ? file.path : null;
     const sqlQuery =
       "UPDATE products SET name= COALESCE($1, name), categories_id= COALESCE($2, categories_id), price= COALESCE($3, price), stock= COALESCE($4, stock), details= COALESCE($5, details), delivery_start= COALESCE($6, delivery_start), delivery_end= COALESCE($7, delivery_end), image = COALESCE(NULLIF($9,''), image) WHERE id=$8 RETURNING *";
     db.query(sqlQuery, [
