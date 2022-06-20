@@ -20,7 +20,7 @@ const { v4: uuidV4 } = require("uuid");
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
     const sqlQuery =
-      "select * from transactions where users_id = $1 AND deleted_at IS NULL ORDER BY DATE DESC";
+      "SELECT t.id, t.products_id , t.total_price, t.delivery , t.date , p.name AS product_name, p.image FROM transactions t JOIN products p ON t.products_id = p.id WHERE t.users_id = $1 AND t.deleted_at ISNULL ORDER BY t.date DESC ";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
