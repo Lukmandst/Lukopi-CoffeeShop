@@ -3,7 +3,7 @@ const { v4: uuidV4 } = require("uuid");
 
 const getTransactionsFromServer = () => {
   return new Promise((resolve, reject) => {
-    db.query("select date(date), sum(t.total_price) as income from transactions t where t.date > now() -interval '1 week' group by date(date) order by date(date) desc")
+    db.query("select date(date), sum(t.total_price) as income from transactions t where t.date > now() -interval '1 week' group by date(date) order by date(date) asc")
       .then((result) => {
         const response = {
           total: result.rowCount,
