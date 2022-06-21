@@ -1,10 +1,11 @@
 # <h1 align="center">Lukopi-CoffeeShop</h1>
-Back End system for Coffee shop using Express.js
+Back End system for Coffee shop using Express.js, integration with postgreSQL as the main database. This project is used for API request to the database coffeeshop database.
 
 
 ## Built With
 ![NodeJS](https://img.shields.io/badge/NodeJs-green)
 ![Javascript](https://img.shields.io/badge/-Javascript-yellow)
+![ExpressJS](https://img.shields.io/badge/Express-JS-yellow)
 
 ## How To Install
 
@@ -21,6 +22,7 @@ Back End system for Coffee shop using Express.js
    ```
    $ npm start
    ```
+5. Deploy this project to the online hosting such as [heroku](https://herokuapp.com)
 
 ## Deployment
 [Lukopi API](https://lukopi-coffeeshop.herokuapp.com/)
