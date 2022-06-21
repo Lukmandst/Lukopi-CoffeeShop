@@ -20,7 +20,7 @@ db.connect()
     server.use(express.urlencoded({ extended: false })); // urlencoded
     server.use(express.json()); // application/json
     const corsOptions = {
-      origin: ["http://localhost:3000", "https://lukopi-coffeshop.netlify.app"],
+      origin: ["http://localhost:3000", "https://lukopi-coffeeshop.netlify.app"],
       methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
     };
