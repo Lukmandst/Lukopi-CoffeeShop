@@ -5,9 +5,9 @@ const {
   getSingleTransactionFromServer,
   findTransaction,
   createNewTransaction,
-  deleteTransactionFromServer,
   deleteTransactionsFromUsers,
   sortProduct,
+  deleteOneTransactionsFromUsers,
 } = transactionModel;
 
 const {
@@ -66,7 +66,7 @@ const postNewTransaction = (req, res) => {
 
 const deleteTransactionById = (req, res) => {
   const id = req.params.id;
-  deleteTransactionFromServer(id)
+  deleteOneTransactionsFromUsers(id)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);
