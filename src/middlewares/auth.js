@@ -61,7 +61,7 @@ const checkResetCode1 = async (req, res) => {
     const { email } = req.params;
     // console.log(email);
     const { confirmCode } = req.body;
-    const confirm = await client.get(`forgotpass${email}`);
+    const confirm = await client.get(`forgotpass-${email}`);
     console.log(confirm);
     if (confirm !== confirmCode) {
       res.status(403).json({ error: "Invalid Confirmation Code !" });
@@ -78,7 +78,7 @@ const checkResetCode2 = async (req, res, next) => {
     const { email } = req.params;
     // console.log(email);
     const { confirmCode } = req.body;
-    const confirm = await client.get(`forgotpass${email}`);
+    const confirm = await client.get(`forgotpass-${email}`);
     console.log(confirm);
     if (confirm !== confirmCode) {
       res.status(403).json({ error: "Invalid Confirmation Code !" });

@@ -90,7 +90,6 @@ auth.logout = async (req, res) => {
         { message: "You have successfully logged out" },
         null
       );
-
     }
   } catch (err) {
     errorResponseDefault(res, 500, err.message);
@@ -103,9 +102,7 @@ auth.confirmEmail = async (req, res) => {
     const data = await verifyEmail(email);
     if (data) {
       await client.del(`register-${email}`);
-      res
-        .status(200)
-        .json({ msg: "Your Email has been verified. Please Login" });
+      res.status(200).json({ msg: "Your Email has been verified" });
     }
   } catch (error) {
     console.log(error);
@@ -144,8 +141,10 @@ auth.resetPassword = async (req, res) => {
     const { newPassword } = req.body;
     const hashedPass = await bcrypt.hash(newPassword, 9);
     const { msg } = await updatePasswordWithEmail(hashedPass, email);
-    await client.del(`forgotpass${email}`);
-    res.status(200).json(msg);
+    if (msg) {
+      await client.del(`forgotpass-${email}`);
+      res.status(200).json({ msg: msg });
+    }
   } catch (error) {
     console.log(error);
     const { message, status } = error;
