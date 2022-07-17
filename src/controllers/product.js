@@ -1,7 +1,7 @@
 const productModel = require("../models/product");
 const {
   getProductsFromServer,
-  // getSingleProductFromServer,
+  getSingleProductFromServer,
   findProduct,
   createNewProduct,
   updateProduct,
@@ -38,18 +38,18 @@ const getAllProducts = (req, res) => {
     });
 };
 
-// const getProductById = (req, res) => {
-//   const id = req.params.id;
-//   getSingleProductFromServer(id)
-//     .then((result) => {
-//       const { data } = result;
-//       successResponseDefault(res, 200, data);
-//     })
-//     .catch((error) => {
-//       const { err, status } = error;
-//       errorResponseDefault(res, status, err);
-//     });
-// };
+const getProductById = (req, res) => {
+  const id = req.params.id;
+  getSingleProductFromServer(id)
+    .then((result) => {
+      const { data } = result;
+      successResponseDefault(res, 200, data);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 
 const findProductByQuery = (req, res) => {
   findProduct(req.query, req.route)
@@ -139,7 +139,7 @@ const sortProductBetweenPrice = (req, res) => {
 
 module.exports = {
   getAllProducts,
-  // getProductById,
+  getProductById,
   findProductByQuery,
   postNewProduct,
   updateProductById,

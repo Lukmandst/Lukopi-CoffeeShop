@@ -2,6 +2,7 @@ const multer = require("multer");
 const path = require("path");
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const { errorResponseDefault } = require("../helpers/response");
 
 // const imageStorage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -28,11 +29,16 @@ const limit = {
 };
 
 const imageFilter = (req, file, cb) => {
-  const extName = path.extname(file.originalname);
-  const allowedExt = /jpg|jpeg|png/;
-  if (!allowedExt.test(extName))
-    return cb(new Error("Image should be .jpg, .jpeg, or .png"), false);
-  cb(null, true);
+  try {
+    const extName = path.extname(file.originalname);
+    const allowedExt = /jpg|jpeg|png/;
+    if (!allowedExt.test(extName))
+      return cb(new Error("Image should be .jpg, .jpeg, or .png"), false);
+    cb(null, true);
+  } catch (error) {
+    const { message } = error;
+    return cb(new Error(message), false);
+  }
 };
 
 // const imageUpload = multer({
@@ -44,6 +50,18 @@ const imageUpload = multer({
   storage: cloudStorage,
   limits: limit,
   fileFilter: imageFilter,
-});
+}).single("photo");
+const uploadFile = (req, res, next) => {
+  imageUpload(req, res, (err) => {
+    if (err) {
+      // let status = 400;
+      // if (err.message.includes("Not Found")) status = 404;
+      // next({ status, message: err.message });
+      // return;
+      return errorResponseDefault(res, 404, { msg: err.message });
+    }
+    next();
+  });
+};
 
-module.exports = imageUpload;
+module.exports = uploadFile;

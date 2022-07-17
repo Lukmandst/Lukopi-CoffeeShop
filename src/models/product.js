@@ -51,24 +51,24 @@ const getProductsFromServer = (
   });
 };
 
-// const getSingleProductFromServer = (id) => {
-//   return new Promise((resolve, reject) => {
-//     const sqlQuery = "select * from products where id = $1";
-//     db.query(sqlQuery, [id])
-//       .then((data) => {
-//         if (data.rows.length === 0) {
-//           return reject({ status: 404, err: "Product Not Found" });
-//         }
-//         const response = {
-//           data: data.rows,
-//         };
-//         resolve(response);
-//       })
-//       .catch((err) => {
-//         reject({ status: 500, err });
-//       });
-//   });
-// };
+const getSingleProductFromServer = (id) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "select * from products where id = $1";
+    db.query(sqlQuery, [id])
+      .then((data) => {
+        if (data.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
+        const response = {
+          data: data.rows,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 const findProduct = (
   query
@@ -283,7 +283,7 @@ const sortByPrice = (query) => {
 
 module.exports = {
   getProductsFromServer,
-  // getSingleProductFromServer,
+  getSingleProductFromServer,
   findProduct,
   createNewProduct,
   updateProduct,
