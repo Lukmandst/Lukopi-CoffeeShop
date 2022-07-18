@@ -71,7 +71,7 @@ auth.signIn = async (req, res) => {
       expiresIn: "1d",
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
-    await client.set(`login-${data.id}`, token, { EX: 86400 });
+    await client.set(`login-${data.id}`, token, { EX: 86400 }); // set expired to 1d
     successResponseDefault(res, 200, { email, roles_id, token }, null);
   } catch (error) {
     const { status = 500, err } = error;
@@ -122,7 +122,7 @@ auth.forgotPassword = async (req, res) => {
       email,
       confirmCode
     );
-    await client.set(`forgotpass-${email}`, confirmCode);
+    await client.set(`forgotpass-${email}`, confirmCode, { EX: 900 }); // set expired to 15 minuter
     res.status(200).json({
       msg: "Please check your email for code confirmation",
     });

@@ -125,7 +125,7 @@ const sendPasswordConfirmation = async (name, email, confirmCode) => {
     <li>Email: <h3>${email}</h3></li>
   </ul>
   YOUR RESET PASSWORD CONFIRMATION CODE: <h1>${confirmCode}</h1> <br>
-  This code only available for 1 hour !
+  This code only available for 15 minutes !
     </div>`;
 
     let mailOptions = {
