@@ -84,12 +84,7 @@ auth.logout = async (req, res) => {
     const cachedLogin = await client.get(`login-${req.userPayload.id}`);
     if (cachedLogin) {
       await client.del(`login-${req.userPayload.id}`);
-      successResponseWithMsg(
-        res,
-        200,
-        { message: "You have successfully logged out" },
-        null
-      );
+      successResponseWithMsg(res, 200, [], "You have successfully logged out");
     }
   } catch (err) {
     errorResponseDefault(res, 500, err.message);
@@ -102,7 +97,7 @@ auth.confirmEmail = async (req, res) => {
     const data = await verifyEmail(email);
     if (data) {
       await client.del(`register-${email}`);
-      res.status(200).json({ msg: "Your Email has been verified" });
+      successResponseWithMsg(res, 200, [], "Your Email has been verified");
     }
   } catch (error) {
     console.log(error);
@@ -143,7 +138,7 @@ auth.resetPassword = async (req, res) => {
     const { msg } = await updatePasswordWithEmail(hashedPass, email);
     if (msg) {
       await client.del(`forgotpass-${email}`);
-      res.status(200).json({ msg: msg });
+      successResponseWithMsg(res, 200, [], msg);
     }
   } catch (error) {
     console.log(error);

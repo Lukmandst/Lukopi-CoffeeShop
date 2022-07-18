@@ -1,5 +1,8 @@
 const jwt = require("jsonwebtoken");
-const { errorResponseDefault } = require("../helpers/response");
+const {
+  errorResponseDefault,
+  successResponseWithMsg,
+} = require("../helpers/response");
 const { getUserByEmail } = require("../models/auth");
 const { client } = require("../config/redis");
 
@@ -63,11 +66,19 @@ const checkResetCode1 = async (req, res) => {
     const { confirmCode } = req.body;
     const confirm = await client.get(`forgotpass-${email}`);
     console.log(confirm);
-    if (confirm !== confirmCode) {
-      res.status(403).json({ error: "Invalid Confirmation Code !" });
+    if (!confirm) {
+      errorResponseDefault(res, 403, {
+        msg: "Code Expired, please make a new request !",
+      });
       return;
     }
-    res.status(200).json({ msg: "Code Verified" });
+    if (confirm !== confirmCode) {
+      errorResponseDefault(res, 403, {
+        msg: "Invalid Confirmation Code !",
+      });
+      return;
+    }
+    successResponseWithMsg(res, 200, [], "Code Verified");
   } catch (error) {
     const status = error.status ? error.status : 500;
     return errorResponseDefault(res, status, { msg: error.message });
@@ -80,8 +91,16 @@ const checkResetCode2 = async (req, res, next) => {
     const { confirmCode } = req.body;
     const confirm = await client.get(`forgotpass-${email}`);
     console.log(confirm);
+    if (!confirm) {
+      errorResponseDefault(res, 403, {
+        msg: "Code Expired, please make a new request !",
+      });
+      return;
+    }
     if (confirm !== confirmCode) {
-      res.status(403).json({ error: "Invalid Confirmation Code !" });
+      errorResponseDefault(res, 403, {
+        msg: "Invalid Confirmation Code !",
+      });
       return;
     }
     next();
