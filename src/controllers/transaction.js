@@ -53,7 +53,7 @@ const findTransactionByQuery = (req, res) => {
 };
 
 const postNewTransaction = (req, res) => {
-  createNewTransaction(req.userPayload.id, req.userPayload.name,req.body)
+  createNewTransaction(req.userPayload.id, req.body)
     .then((result) => {
       const { data, total } = result;
       successResponseDefault(res, 200, data, total);
@@ -109,5 +109,5 @@ module.exports = {
   postNewTransaction,
   deleteTransactionById,
   sortPopularProduct,
-  deleteUserTransactions
+  deleteUserTransactions,
 };

@@ -3,7 +3,9 @@ const { v4: uuidV4 } = require("uuid");
 
 const getTransactionsFromServer = () => {
   return new Promise((resolve, reject) => {
-    db.query("select date(date), sum(t.total_price) as income from transactions t where t.date > now() -interval '1 week' group by date(date) order by date(date) asc")
+    db.query(
+      "select date(date), sum(t.total_price) as income from transactions t where t.date > now() -interval '1 week' group by date(date) order by date(date) asc"
+    )
       .then((result) => {
         const response = {
           total: result.rowCount,
@@ -80,7 +82,7 @@ const findTransaction = (query) => {
   });
 };
 
-const createNewTransaction = (user_id, name, body) => {
+const createNewTransaction = (user_id, body) => {
   return new Promise((resolve, reject) => {
     const { quantity, product_id, product_size, delivery, total_price } = body;
     const time = new Date(Date.now());
@@ -88,7 +90,7 @@ const createNewTransaction = (user_id, name, body) => {
     const values = [
       id,
       time,
-      name,
+
       product_id,
       quantity,
       product_size,
@@ -97,7 +99,7 @@ const createNewTransaction = (user_id, name, body) => {
       total_price,
     ];
     const sqlQuery =
-      "INSERT INTO transactions (id, date, users_display_name, products_id, quantity, sizes_id, users_id, delivery, total_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)  RETURNING *";
+      "INSERT INTO transactions (id, date,  products_id, quantity, sizes_id, users_id, delivery, total_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)  RETURNING *";
     db.query(sqlQuery, values)
       .then(({ rows }) => {
         const response = {
