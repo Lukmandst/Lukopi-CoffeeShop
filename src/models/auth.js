@@ -34,18 +34,35 @@ const getUserByEmail = (email) => {
   });
 };
 
-const getInfobyUserEmail = async (email) => {
-  try {
+// const getInfobyUserEmail = async (email) => {
+//   try {
+//     const sqlQuery =
+//       "SELECT id, pass, roles_id, status FROM users WHERE email=$1";
+//     const result = await db.query(sqlQuery, [email]);
+//     if (result.rowCount === 0)
+//       throw { status: 400, err: { msg: "Email is not registered" } };
+//     console.log(result.rows[0]);
+//     return result.rows[0];
+//   } catch (error) {
+//     throw { status: error.status ? error.status : 500, msg: error.message };
+//   }
+// };
+const getInfobyUserEmail = (email) => {
+  return new Promise((resolve, reject) => {
     const sqlQuery =
       "SELECT id, pass, roles_id, status FROM users WHERE email=$1";
-    const result = await db.query(sqlQuery, [email]);
-    if (result.rowCount === 0)
-      throw { status: 400, err: { msg: "Email is not registered" } };
-    console.log(result.rows[0]);
-    return result.rows[0];
-  } catch (error) {
-    throw { status: error.status ? error.status : 500, msg: error.message };
-  }
+    db.query(sqlQuery, [email])
+      .then((result) => {
+        if (result.rowCount === 0) {
+          return reject({
+            status: 400,
+            err: { msg: "Email is not registered" },
+          });
+        }
+        resolve(result.rows[0]);
+      })
+      .catch((err) => reject({ status: 500, err }));
+  });
 };
 const verifyEmail = async (email) => {
   try {

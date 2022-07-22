@@ -27,7 +27,7 @@ auth.signUp = (req, res) => {
   bcrypt
     .hash(pass, 9)
     .then((hashedPass) => {
-      signUp(email, hashedPass, phone)
+      signUp(email.toLowerCase(), hashedPass, phone)
         .then(async ({ data, msg }) => {
           const token = jwt.sign({ email: data.email }, process.env.JWT_SECRET);
           await client.set(`register-${data.email}`, token);
@@ -49,7 +49,7 @@ auth.signIn = async (req, res) => {
     const {
       body: { email, pass },
     } = req;
-    const data = await getInfobyUserEmail(email);
+    const data = await getInfobyUserEmail(email.toLowerCase());
     const roles_id = data.roles_id;
     const verify = await bcrypt.compare(pass, data.pass);
     if (!verify)
@@ -63,7 +63,7 @@ auth.signIn = async (req, res) => {
     }
     const payload = {
       id: data.id,
-      email,
+      email: email.toLowerCase(),
       roles_id,
     };
     const jwtOptions = {
@@ -72,7 +72,12 @@ auth.signIn = async (req, res) => {
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, jwtOptions);
     await client.set(`login-${data.id}`, token, { EX: 86400 }); // set expired to 1d
-    successResponseDefault(res, 200, { email, roles_id, token }, null);
+    successResponseDefault(
+      res,
+      200,
+      { email: email.toLowerCase(), roles_id, token },
+      null
+    );
   } catch (error) {
     const { status = 500, err } = error;
     errorResponseDefault(res, status, err);
