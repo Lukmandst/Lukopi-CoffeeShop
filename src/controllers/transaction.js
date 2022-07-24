@@ -8,6 +8,7 @@ const {
   deleteTransactionsFromUsers,
   sortProduct,
   deleteOneTransactionsFromUsers,
+  deleteMultipleTransactionsFromUsers,
 } = transactionModel;
 
 const {
@@ -76,6 +77,18 @@ const deleteTransactionById = (req, res) => {
       errorResponseDefault(res, status, err);
     });
 };
+const deleteTransactionByMultipleId = (req, res) => {
+  const transaction_id = req.body.id;
+  deleteMultipleTransactionsFromUsers(transaction_id)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
 
 const sortPopularProduct = (req, res) => {
   const id = req.params.id;
@@ -110,4 +123,5 @@ module.exports = {
   deleteTransactionById,
   sortPopularProduct,
   deleteUserTransactions,
+  deleteTransactionByMultipleId,
 };

@@ -22,7 +22,7 @@ const getTransactionsFromServer = () => {
 const getSingleTransactionFromServer = (id) => {
   return new Promise((resolve, reject) => {
     const sqlQuery =
-      "SELECT t.id, t.products_id , t.total_price, t.delivery , t.date , p.name AS product_name, p.image FROM transactions t JOIN products p ON t.products_id = p.id WHERE t.users_id = $1 AND t.deleted_at ISNULL ORDER BY t.date DESC ";
+      "SELECT t.id, t.products_id , t.total_price, t.delivery , t.date, t.sizes , p.name AS product_name, p.image FROM transactions t JOIN products p ON t.products_id = p.id WHERE t.users_id = $1 AND t.deleted_at ISNULL ORDER BY t.date DESC ";
     db.query(sqlQuery, [id])
       .then((data) => {
         if (data.rows.length === 0) {
@@ -182,6 +182,44 @@ const deleteOneTransactionsFromUsers = (id) => {
       });
   });
 };
+const deleteMultipleTransactionsFromUsers = (id) => {
+  return new Promise((resolve, reject) => {
+    // console.log(id.split(","));
+    let arrayId = id.split(","); // const values = id;
+    let queryId = "";
+    // for (let i = 0; i < arrayId.length; i++) {
+    //   i === arrayId.length + 1
+    //     ? (queryId += "$" + i)
+    //     : (queryId += "$" + i + ",");
+    //   // i < arrayId.length
+    //   //   ? (queryId += `'${arrayId[i]}', `)
+    //   //   : (queryId += `'${arrayId[i]}'`);
+    //   // paramid.push(queryId[i]);
+    // }
+    for (let i = 1; i <= arrayId.length; i++) {
+      i === arrayId.length ? (queryId += "$" + i) : (queryId += "$" + i + ",");
+    }
+
+    console.log(queryId);
+    console.log(arrayId);
+    let sqlQuery = `UPDATE transactions SET deleted_at =now() WHERE id in(${queryId})`;
+    // if (queryId.length > 1) {
+    //   queryId.pop();
+    // }
+    // console.log(sqlQuery);
+    db.query(sqlQuery, arrayId)
+      .then((data) => {
+        const response = {
+          data: data.rows,
+          msg: `Transaction with id${id}  was successfully deleted`,
+        };
+        resolve(response);
+      })
+      .catch((err) => {
+        reject({ status: 500, err });
+      });
+  });
+};
 
 module.exports = {
   getTransactionsFromServer,
@@ -192,4 +230,5 @@ module.exports = {
   sortProduct,
   deleteTransactionsFromUsers,
   deleteOneTransactionsFromUsers,
+  deleteMultipleTransactionsFromUsers,
 };
