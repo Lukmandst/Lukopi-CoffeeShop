@@ -53,14 +53,49 @@ const getProductById = (req, res) => {
 
 const findProductByQuery = async (req, res) => {
   try {
-    const { data, total, totalProducts, totalPages, nextPage, previousPage } =
-      await findProduct(req.query, req.route);
+    const { data, total, totalProducts, totalPages } = await findProduct(
+      req.query
+    );
+    const {
+      name,
+      category,
+      order = "desc",
+      sort = "created_at",
+      page = 1,
+      limit = 5,
+    } = req.query;
+    let nextPage = "/products?";
+    let prevPage = "/products?";
+    if (name) {
+      nextPage += `name=${name}&`;
+      prevPage += `name=${name}&`;
+    }
+    if (category) {
+      nextPage += `category=${category}&`;
+      prevPage += `category=${category}&`;
+    }
+    if (sort) {
+      nextPage += `sort=${sort}&`;
+      prevPage += `sort=${sort}&`;
+    }
+    if (order) {
+      nextPage += `order=${order}&`;
+      prevPage += `order=${order}&`;
+    }
+    if (limit) {
+      nextPage += `limit=${limit}&`;
+      prevPage += `limit=${limit}&`;
+    }
+    nextPage += `page=${Number(page) + 1}`;
+    prevPage += `page=${Number(page) - 1}`;
     const meta = {
       totalProducts,
       totalPages,
-      nextPage,
-      previousPage,
+      currentPage: Number(page),
+      nextPage: Number(page) !== totalPages && nextPage,
+      previousPage: Number(page) !== 1 && prevPage,
     };
+
     successResponsewihMeta(res, 200, data, total, meta);
   } catch (error) {
     const { err, status } = error;

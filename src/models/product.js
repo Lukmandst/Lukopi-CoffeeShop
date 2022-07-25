@@ -70,7 +70,7 @@ const getSingleProductFromServer = (id) => {
   });
 };
 
-const findProduct = (query, route) => {
+const findProduct = (query) => {
   return new Promise((resolve, reject) => {
     const {
       name,
@@ -142,14 +142,6 @@ const findProduct = (query, route) => {
             response.totalPages = Math.ceil(
               response.totalProducts / Number(limit)
             );
-            if (page < response.totalPages)
-              response.nextPage = `/product${route.path}?page=${
-                parseInt(page) + 1
-              }`;
-            if (offset > 0)
-              response.previousPage = `/product${route.path}?page=${
-                parseInt(page) - 1
-              }`;
             resolve(response);
           })
           .catch((err) => {
