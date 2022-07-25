@@ -128,11 +128,21 @@ const createNewTransaction = (user_id, body) => {
 //   });
 // };
 
-const sortProduct = () => {
+const sortProduct = (query) => {
   return new Promise((resolve, reject) => {
-    db.query(
-      "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC LIMIT 10"
-    )
+    const { name } = query;
+    const value = [];
+    let sqlQuery = "";
+    if (!name) {
+      sqlQuery +=
+        "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC LIMIT 10";
+    }
+    if (name) {
+      sqlQuery +=
+        "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id where lower(p.name) like lower('%' || $1 || '%') GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC LIMIT 10";
+      value.push(name);
+    }
+    db.query(sqlQuery, value)
       .then((result) => {
         const response = {
           total: result.rowCount,

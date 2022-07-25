@@ -91,8 +91,7 @@ const deleteTransactionByMultipleId = (req, res) => {
 };
 
 const sortPopularProduct = (req, res) => {
-  const id = req.params.id;
-  sortProduct(id)
+  sortProduct(req.query)
     .then((result) => {
       const { data, total } = result;
       successResponseDefault(res, 200, data, total);
