@@ -131,7 +131,7 @@ const createNewTransaction = (user_id, body) => {
 const sortProduct = () => {
   return new Promise((resolve, reject) => {
     db.query(
-      "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC"
+      "SELECT p.id, p.name, p.price, p.image, COUNT(*) FROM transactions t JOIN products p on t.products_id = p.id GROUP BY p.id, p.name, p.price, p.image ORDER BY COUNT(*) DESC LIMIT 10"
     )
       .then((result) => {
         const response = {
