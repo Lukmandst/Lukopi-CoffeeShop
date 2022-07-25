@@ -25,7 +25,7 @@ const cloudStorage = new CloudinaryStorage({
 });
 
 const limit = {
-  fileSize: 4e6, // 4mb
+  fileSize: 10e6, // 1.25mb
 };
 
 const imageFilter = (req, file, cb) => {
