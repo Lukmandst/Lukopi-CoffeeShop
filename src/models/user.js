@@ -172,6 +172,25 @@ const updateUser = (id, body, file) => {
       });
   });
 };
+const updatePassword = (hashedPass, id) => {
+  return new Promise((resolve, reject) => {
+    const sqlQuery = "UPDATE users SET pass=$1, updated_at=now() WHERE id=$2";
+    const values = [hashedPass, id];
+    db.query(sqlQuery, values)
+      .then(() => {
+        const response = {
+          msg: "Password has been updated",
+        };
+        resolve(response);
+      })
+      .catch((error) => {
+        reject({
+          status: 500,
+          error,
+        });
+      });
+  });
+};
 
 // const updateImageUser = (id, file) => {
 //   return new Promise((resolve, reject) => {
@@ -219,6 +238,7 @@ module.exports = {
   findUser,
   createNewUser,
   updateUser,
+  updatePassword,
   // deleteUserFromServer,
   // updateImageUser,
 };

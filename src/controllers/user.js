@@ -1,4 +1,6 @@
 const userModel = require("../models/user");
+const bcrypt = require("bcrypt");
+
 const {
   getUsersFromServer,
   findUser,
@@ -6,6 +8,7 @@ const {
   createNewUser,
   updateUser,
   updateImageUser,
+  updatePassword,
   // deleteUserFromServer,
 } = userModel;
 
@@ -52,7 +55,8 @@ const getUserById = (req, res) => {
 const findUserByQuery = (req, res) => {
   findUser(req.query, req.route)
     .then((result) => {
-      const { total,totalData, totalPage, data, nextPage, previousPage } = result;
+      const { total, totalData, totalPage, data, nextPage, previousPage } =
+        result;
       const meta = {
         totalData,
         totalPage,
@@ -62,7 +66,7 @@ const findUserByQuery = (req, res) => {
         nextPage,
         previousPage,
       };
-      successResponsewihMeta(res, 200, {total,data}, meta);
+      successResponsewihMeta(res, 200, { total, data }, meta);
     })
     .catch((error) => {
       const { err, status } = error;
@@ -85,6 +89,19 @@ const postNewUser = (req, res) => {
 const updateUserById = (req, res) => {
   const { file = null } = req;
   updateUser(req.userPayload.id, req.body, file)
+    .then((result) => {
+      const { data, msg } = result;
+      successResponseWithMsg(res, 200, data, msg);
+    })
+    .catch((error) => {
+      const { err, status } = error;
+      errorResponseDefault(res, status, err);
+    });
+};
+const updateUserPassword = async (req, res) => {
+  const { newPassword } = req.body;
+  const hashedPass = await bcrypt.hash(newPassword, 9);
+  updatePassword(hashedPass, req.userPayload.id)
     .then((result) => {
       const { data, msg } = result;
       successResponseWithMsg(res, 200, data, msg);
@@ -128,4 +145,5 @@ module.exports = {
   updateUserById,
   // deleteUserById,
   updatePhotoUser,
+  updateUserPassword,
 };
