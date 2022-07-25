@@ -144,6 +144,9 @@ const sortProduct = (query) => {
     }
     db.query(sqlQuery, value)
       .then((result) => {
+        if (result.rows.length === 0) {
+          return reject({ status: 404, err: "Product Not Found" });
+        }
         const response = {
           total: result.rowCount,
           data: result.rows,
