@@ -70,43 +70,63 @@ const getSingleProductFromServer = (id) => {
   });
 };
 
-const findProduct = (
-  query
-  //  route
-) => {
+const findProduct = (query, route) => {
   return new Promise((resolve, reject) => {
     const {
       name,
-      price,
       category,
-      price_above,
-      price_under,
-      order,
-      sort,
-      id,
-      // page = 1,
-      // limit = 2,
+      order = "desc",
+      sort = "created_at",
+      page = 1,
+      limit = 5,
     } = query;
-    // const offset = (parseInt(page) - 1) * parseInt(limit);
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    let totalParam = [];
+    let arr = [];
+    let totalQuery =
+      "select count(*) as total_products from products p join categories c on p.categories_id = c.id WHERE p.on_deleted = false";
     let sqlQuery =
-      "select * from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6";
-    if (order) {
-      sqlQuery += " order by " + sort + " " + order;
+      "SELECT p.id , p.name , p.price , p.details ,p.image ,c.name as category , p.created_at, p.on_deleted  FROM products p JOIN categories c on p.categories_id = c.id WHERE p.on_deleted = false";
+    if (!name && !category) {
+      sqlQuery += " order by p." + sort + " " + order + " LIMIT $1 OFFSET $2";
+      arr.push(parseInt(limit), offset);
     }
-    // if (page) {
-    //   sqlQuery += " LIMIT " + Number(limit) + " OFFSET " + offset;
-    // }
-    // console.log(sqlQuery);
-    // console.log(Array.isArray(query));
-    // console.log(typeof query);
-    // console.log(Object.values(query));
-    // let objq = Object.entries(query);
-    // console.log(objq);
-    // console.log("from " + Object.fromEntries(objq));
-    // let paramInput = `${Object.keys(query)}=${Object.values(query)}`; // only for 1 param
-    // console.log(paramInput);
+    if (name && !category) {
+      sqlQuery +=
+        " and lower(p.name) like lower('%' || $1 || '%') order by p." +
+        sort +
+        " " +
+        order +
+        " LIMIT $2 OFFSET $3";
+      totalQuery += " and lower(p.name) like lower('%' || $1 || '%')";
+      arr.push(name, parseInt(limit), offset);
+      totalParam.push(name);
+    }
+    if (category && !name) {
+      sqlQuery +=
+        " and lower(c.name) = lower($1) order by p." +
+        sort +
+        " " +
+        order +
+        " LIMIT $2 OFFSET $3";
+      totalQuery += " and lower(c.name) = lower($1)";
+      arr.push(category, Number(limit), offset);
+      totalParam.push(category);
+    }
+    if (name && category) {
+      sqlQuery +=
+        " and lower(p.name) like lower('%' || $1 || '%') and lower(c.name) = lower($2) order by p." +
+        sort +
+        " " +
+        order +
+        " LIMIT $3 OFFSET $4";
+      totalQuery +=
+        " and lower(p.name) like lower('%' || $1 || '%') and lower(c.name) = lower($2)";
+      arr.push(name, category, Number(limit), offset);
+      totalParam.push(name, category);
+    }
 
-    db.query(sqlQuery, [name, price, category, price_above, price_under, id])
+    db.query(sqlQuery, arr)
       .then((result) => {
         if (result.rows.length === 0) {
           return reject({ status: 404, err: "Product Not Found" });
@@ -115,29 +135,26 @@ const findProduct = (
           total: result.rowCount,
           data: result.rows,
         };
-        console.log("bawah");
-        // db.query(
-        //   "select * from products where lower(name) like lower('%' || $1 || '%')  or price = $2 or categories_id = $3 or price >= $4 or price <= $5 or id = $6",
-        //   [name, price, category, price_above, price_under, id]
-        // )
-        //   .then((result) => {
-        //     response.totalData = parseInt(result.rowCount);
-        //     response.totalPage = Math.ceil(
-        //       response.totalData / parseInt(limit)
-        //     );
-        //     if (page < response.totalPage)
-        //       response.nextPage = `/product${route.path}?page=${
-        //         parseInt(page) + 1
-        //       }&${paramInput}`;
-        //     if (offset > 0)
-        //       response.previousPage = `/product${route.path}?page=${
-        //         parseInt(page) - 1
-        //       }${paramInput}`;
-        resolve(response);
-        // })
-        // .catch((err) => {
-        //   reject({ status: 500, err });
-        // });
+        // console.log("bawah");
+        db.query(totalQuery, totalParam)
+          .then((result) => {
+            response.totalProducts = Number(result.rows[0]["total_products"]);
+            response.totalPages = Math.ceil(
+              response.totalProducts / Number(limit)
+            );
+            if (page < response.totalPages)
+              response.nextPage = `/product${route.path}?page=${
+                parseInt(page) + 1
+              }`;
+            if (offset > 0)
+              response.previousPage = `/product${route.path}?page=${
+                parseInt(page) - 1
+              }`;
+            resolve(response);
+          })
+          .catch((err) => {
+            reject({ status: 500, err });
+          });
       })
       .catch((err) => {
         reject({ status: 500, err });

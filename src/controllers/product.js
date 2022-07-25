@@ -51,26 +51,21 @@ const getProductById = (req, res) => {
     });
 };
 
-const findProductByQuery = (req, res) => {
-  findProduct(req.query, req.route)
-    .then((result) => {
-      const { totalData, totalPage, total, data, nextPage, previousPage } =
-        result;
-      const meta = {
-        totalData,
-        totalPage,
-        // route: `/product${req.route.path}?`,
-        // query: req.query,
-        page: parseInt(req.query.page),
-        nextPage,
-        previousPage,
-      };
-      successResponsewihMeta(res, 200, data, total, meta);
-    })
-    .catch((error) => {
-      const { err, status } = error;
-      errorResponseDefault(res, status, err);
-    });
+const findProductByQuery = async (req, res) => {
+  try {
+    const { data, total, totalProducts, totalPages, nextPage, previousPage } =
+      await findProduct(req.query, req.route);
+    const meta = {
+      totalProducts,
+      totalPages,
+      nextPage,
+      previousPage,
+    };
+    successResponsewihMeta(res, 200, data, total, meta);
+  } catch (error) {
+    const { err, status } = error;
+    errorResponseDefault(res, status, err);
+  }
 };
 
 const postNewProduct = (req, res) => {
