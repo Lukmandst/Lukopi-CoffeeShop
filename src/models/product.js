@@ -172,7 +172,7 @@ const createNewProduct = (body, file) => {
     //   return reject({ status: 400, err: "Image not found" });
     // }
     const sqlQuery =
-      "INSERT INTO products (id, name, categories_id, price, stock, details, delivery_start, delivery_end, image) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
+      "INSERT INTO products (id, name, categories_id, price, stock, details, delivery_start, delivery_end, image,created_at, on_deleted) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, now(), false) RETURNING *";
     db.query(sqlQuery, [
       id,
       name,
@@ -197,7 +197,7 @@ const createNewProduct = (body, file) => {
 
 const deleteProductFromServer = (id) => {
   return new Promise((resolve, reject) => {
-    const sqlQuery = "DELETE FROM products where id = $1";
+    const sqlQuery = "UPDATE products SET on_deleted=true where id = $1";
     db.query(sqlQuery, [id])
       .then((data) => {
         const response = {
