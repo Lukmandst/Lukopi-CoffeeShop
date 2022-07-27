@@ -80,12 +80,12 @@ const findPromo = (query) => {
 
 const createNewPromo = (body) => {
   return new Promise((resolve, reject) => {
-    const { name, code, discount, date_end } = body;
-    console.log(body);
+    const { name, code, discount, date_end, description } = body;
+    // console.log(body);
     const id = uuidV4();
     const sqlQuery =
-      "INSERT INTO promos (id, name, code, discount, date_end) VALUES($1, $2, $3, $4, $5) returning *";
-    db.query(sqlQuery, [id, name, code, discount, date_end])
+      "INSERT INTO promos (id, name, code, discount, date_end, description) VALUES($1, $2, $3, $4, $5, $6) returning *";
+    db.query(sqlQuery, [id, name, code, discount, date_end, description])
       .then(({ rows }) => {
         const response = {
           data: rows[0],
