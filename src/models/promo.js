@@ -1,5 +1,5 @@
 const db = require("../config/database");
-
+const { v4: uuidV4 } = require("uuid");
 const getPromoFromServer = () => {
   return new Promise((resolve, reject) => {
     db.query("SELECT * FROM promos")
@@ -80,33 +80,22 @@ const findPromo = (query) => {
 
 const createNewPromo = (body) => {
   return new Promise((resolve, reject) => {
-    const {
-      name,
-      code,
-      discount,
-      date_start,
-      date_end,
-      product_size,
-      buy_method,
-    } = body;
+    const { name, code, discount, date_end } = body;
+    console.log(body);
+    const id = uuidV4();
     const sqlQuery =
-      "INSERT INTO promos(name, code, discount, start, end, sizes_id, delivery_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
-    db.query(sqlQuery, [
-      name,
-      code,
-      discount,
-      date_start,
-      date_end,
-      product_size,
-      buy_method,
-    ])
+      "INSERT INTO promos (id, name, code, discount, date_end) VALUES($1, $2, $3, $4, $5) returning *";
+    db.query(sqlQuery, [id, name, code, discount, date_end])
       .then(({ rows }) => {
         const response = {
           data: rows[0],
         };
         resolve(response);
       })
-      .catch((err) => reject({ status: 500, err }));
+      .catch((err) => {
+        console.log(err);
+        reject({ status: 500, err });
+      });
   });
 };
 
